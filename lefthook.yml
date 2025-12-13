@@ -1,0 +1,20 @@
+pre-commit:
+  parallel: true
+  commands:
+    eslint:
+      glob: "*.{js,ts,jsx,tsx}"
+      run: yarn lint:staged {staged_files}
+
+    prettier:
+      glob: "*.{js,ts,jsx,tsx,md}"
+      run: yarn prettier:staged {staged_files}
+      stage_fixed: true
+
+    types:
+      glob: "*.{js,ts,jsx,tsx}"
+      run: yarn typecheck
+
+commit-msg:
+  commands:
+    commitlint:
+      run: npx --no-install commitlint --edit "{1}"

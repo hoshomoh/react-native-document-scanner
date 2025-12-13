@@ -1,0 +1,134 @@
+{
+  "name": "@hoshomoh/react-native-document-scanner",
+  "version": "0.1.0",
+  "description": "A React Native library for scanning documents.",
+  "main": "./lib/module/index.js",
+  "types": "./lib/typescript/src/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.tsx",
+      "types": "./lib/typescript/src/index.d.ts",
+      "default": "./lib/module/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "src",
+    "lib",
+    "ios",
+    "*.podspec",
+    "!ios/build",
+    "!**/__tests__",
+    "!**/__fixtures__",
+    "!**/__mocks__",
+    "!**/.*"
+  ],
+  "scripts": {
+    "example": "yarn workspace react-native-document-scanner-example",
+    "clean": "del-cli example/ios/build lib",
+    "prepare": "lefthook install",
+    "build": "bob build",
+    "typecheck": "tsc",
+    "prepack": "bob build",
+    "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "lint:staged": "eslint --max-warnings=0",
+    "prettier": "prettier \"**/*.{js,ts,tsx,md}\" --check",
+    "prettier:fix": "prettier \"**/*.{js,ts,tsx,md}\" --write",
+    "prettier:staged": "prettier --write",
+    "test": "jest"
+  },
+  "keywords": [
+    "react-native",
+    "ios"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hoshomoh/react-native-document-scanner.git"
+  },
+  "author": "Oshomo Oforomeh <hello@oshomo.oforomeh.com> (https://github.com/hoshomoh)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hoshomoh/react-native-document-scanner/issues"
+  },
+  "homepage": "https://github.com/hoshomoh/react-native-document-scanner#readme",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "devDependencies": {
+    "@commitlint/config-conventional": "^20.2.0",
+    "@eslint/compat": "^2.0.0",
+    "@eslint/eslintrc": "^3.3.3",
+    "@eslint/js": "^9.39.2",
+    "@react-native/babel-preset": "0.83.0",
+    "@react-native/eslint-config": "0.83.0",
+    "@types/jest": "^30.0.0",
+    "@types/react": "^19.2.7",
+    "commitlint": "^20.2.0",
+    "del-cli": "^7.0.0",
+    "eslint": "^9.39.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "jest": "^30.2.0",
+    "lefthook": "^2.0.11",
+    "prettier": "^3.7.4",
+    "react": "19.2.3",
+    "react-native": "0.83.0",
+    "react-native-builder-bob": "^0.40.17",
+    "turbo": "^2.6.3",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "react": "*",
+    "react-native": "*"
+  },
+  "workspaces": [
+    "example"
+  ],
+  "packageManager": "yarn@4.11.0",
+  "react-native-builder-bob": {
+    "source": "src",
+    "output": "lib",
+    "targets": [
+      [
+        "module",
+        {
+          "esm": true
+        }
+      ],
+      [
+        "typescript",
+        {
+          "project": "tsconfig.build.json"
+        }
+      ]
+    ]
+  },
+  "codegenConfig": {
+    "name": "DocumentScannerSpec",
+    "type": "modules",
+    "jsSrcsDir": "src",
+    "android": {
+      "javaPackageName": "com.documentscanner"
+    }
+  },
+  "prettier": {
+    "quoteProps": "consistent",
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "es5",
+    "useTabs": false
+  },
+  "jest": {
+    "preset": "react-native",
+    "modulePathIgnorePatterns": [
+      "<rootDir>/example/node_modules",
+      "<rootDir>/lib/"
+    ]
+  },
+  "commitlint": {
+    "extends": [
+      "@commitlint/config-conventional"
+    ]
+  }
+}
