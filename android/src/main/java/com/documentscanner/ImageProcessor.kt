@@ -174,7 +174,14 @@ class ImageProcessor(private val context: Context) {
     
     /**
      * Full OCR optimization pipeline: denoise → sharpen → monochrome.
-     * Best for maximizing text recognition accuracy.
+     *
+     * This is the recommended filter for maximum text recognition accuracy:
+     * 1. **Denoise**: Removes noise that would otherwise be amplified by sharpening.
+     * 2. **Sharpen**: Enhances edge clarity for better character recognition.
+     * 3. **Monochrome**: High-contrast B&W improves OCR engine performance.
+     *
+     * @param src The source bitmap to process.
+     * @return The fully processed bitmap.
      */
     private fun applyOcrOptimizedPipeline(src: Bitmap): Bitmap {
         var result = src
@@ -188,7 +195,12 @@ class ImageProcessor(private val context: Context) {
     }
     
     /**
-     * Applies a ColorMatrix filter (for grayscale, monochrome).
+     * Applies a ColorMatrix filter to the bitmap.
+     * Used for color transformations like grayscale and monochrome.
+     *
+     * @param src The source bitmap to filter.
+     * @param matrix The ColorMatrix defining the transformation.
+     * @return A new bitmap with the filter applied.
      */
     private fun applyColorMatrixFilter(src: Bitmap, matrix: ColorMatrix): Bitmap {
         val dest = Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888)
@@ -199,12 +211,26 @@ class ImageProcessor(private val context: Context) {
         return dest
     }
     
+    /**
+     * Creates a grayscale ColorMatrix.
+     * Desaturates the image while preserving luminance values.
+     *
+     * @return A ColorMatrix configured for grayscale conversion.
+     */
     private fun createGrayscaleMatrix(): ColorMatrix {
         val matrix = ColorMatrix()
         matrix.setSaturation(0f)
         return matrix
     }
     
+    /**
+     * Creates a high-contrast monochrome ColorMatrix.
+     * Combines grayscale desaturation with contrast enhancement.
+     * Produces a dramatic black & white effect ideal for document scanning.
+     *
+     * @return A ColorMatrix configured for monochrome conversion with contrast boost.
+     * @note Uses scale=1.3 for contrast enhancement, optimized for text readability.
+     */
     private fun createMonochromeMatrix(): ColorMatrix {
         val matrix = ColorMatrix()
         matrix.setSaturation(0f)
@@ -223,7 +249,12 @@ class ImageProcessor(private val context: Context) {
     
     /**
      * Applies a 3x3 convolution kernel to the bitmap.
-     * Used for denoise (blur) and sharpen effects.
+     * Used for spatial filtering effects like blur (denoise) and sharpen.
+     *
+     * @param src The source bitmap to filter.
+     * @param kernel A 9-element float array representing the 3x3 convolution kernel.
+     * @return A new bitmap with the convolution applied.
+     * @note Edge pixels are not processed to avoid bounds checking complexity.
      */
     private fun applyConvolutionFilter(src: Bitmap, kernel: FloatArray): Bitmap {
         val width = src.width
@@ -232,7 +263,7 @@ class ImageProcessor(private val context: Context) {
         val result = IntArray(width * height)
         src.getPixels(pixels, 0, width, 0, 0, width, height)
         
-        // 3x3 kernel offsets
+        // 3x3 kernel offsets: top-left to bottom-right
         val offsets = arrayOf(
             intArrayOf(-1, -1), intArrayOf(0, -1), intArrayOf(1, -1),
             intArrayOf(-1, 0), intArrayOf(0, 0), intArrayOf(1, 0),
@@ -262,14 +293,22 @@ class ImageProcessor(private val context: Context) {
     }
     
     companion object {
-        // Box blur kernel (simple denoise/smooth)
+        /**
+         * Box blur kernel (3x3) for noise reduction.
+         * Averages each pixel with its 8 neighbors, smoothing out noise.
+         * Useful for improving OCR accuracy on noisy photographs.
+         */
         private val DENOISE_KERNEL = floatArrayOf(
             1/9f, 1/9f, 1/9f,
             1/9f, 1/9f, 1/9f,
             1/9f, 1/9f, 1/9f
         )
         
-        // Sharpen kernel (enhances edges)
+        /**
+         * Sharpen kernel (3x3) for edge enhancement.
+         * Emphasizes differences between adjacent pixels.
+         * Improves OCR accuracy on blurry or soft-focused text.
+         */
         private val SHARPEN_KERNEL = floatArrayOf(
             0f, -1f, 0f,
             -1f, 5f, -1f,
