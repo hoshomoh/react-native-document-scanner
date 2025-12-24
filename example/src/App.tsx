@@ -42,7 +42,7 @@ const OptionRow = ({
  * Radio group using native Switch components.
  * Only one option can be selected at a time.
  */
-function RadioGroup<T extends string>({
+function SwitchGroup<T extends string>({
   options,
   selected,
   onSelect,
@@ -201,7 +201,7 @@ export default function App() {
 
               <View style={styles.radioSection}>
                 <Text style={styles.radioSectionTitle}>Format</Text>
-                <RadioGroup
+                <SwitchGroup
                   options={[Format.JPG, Format.PNG]}
                   selected={format}
                   onSelect={setFormat}
@@ -214,7 +214,7 @@ export default function App() {
 
               <View style={styles.radioSection}>
                 <Text style={styles.radioSectionTitle}>Filter</Text>
-                <RadioGroup
+                <SwitchGroup
                   options={[
                     Filter.COLOR,
                     Filter.GRAYSCALE,
