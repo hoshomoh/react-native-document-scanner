@@ -52,7 +52,7 @@ public class ImageUtil {
      Applies a CoreImage filter to the image.
      - Parameters:
        - image: The input UIImage.
-       - filterType: The filter name ('grayscale', 'monochrome').
+       - filterType: The filter name ('grayscale', 'monochrome', 'denoise', 'sharpen', 'ocrOptimized').
      - Returns: The filtered UIImage, or nil if filtering fails.
      */
     public static func applyFilter(_ image: UIImage, filterType: String) -> UIImage? {
@@ -60,33 +60,21 @@ public class ImageUtil {
         
         guard let ciImage = CIImage(image: image) else { return nil }
         
-        var outputImage: CIImage?
+        let outputImage: CIImage?
         
-        if filterType == "grayscale" {
-            if let filter = CIFilter(name: "CIPhotoEffectMono") {
-                filter.setValue(ciImage, forKey: kCIInputImageKey)
-                outputImage = filter.outputImage
-            }
-        } else if filterType == "monochrome" {
-            if let filter = CIFilter(name: "CIPhotoEffectNoir") {
-                filter.setValue(ciImage, forKey: kCIInputImageKey)
-                outputImage = filter.outputImage
-            }
-        } else if filterType == "denoise" {
-            /* CINoiseReduction reduces image noise, improving OCR on noisy photos */
-            if let filter = CIFilter(name: "CINoiseReduction") {
-                filter.setValue(ciImage, forKey: kCIInputImageKey)
-                filter.setValue(0.02, forKey: "inputNoiseLevel")
-                filter.setValue(0.4, forKey: "inputSharpness")
-                outputImage = filter.outputImage
-            }
-        } else if filterType == "sharpen" {
-            /* CISharpenLuminance enhances edge clarity for blurry text */
-            if let filter = CIFilter(name: "CISharpenLuminance") {
-                filter.setValue(ciImage, forKey: kCIInputImageKey)
-                filter.setValue(0.8, forKey: kCIInputSharpnessKey)
-                outputImage = filter.outputImage
-            }
+        switch filterType {
+        case "grayscale":
+            outputImage = applyGrayscale(ciImage)
+        case "monochrome":
+            outputImage = applyMonochrome(ciImage)
+        case "denoise":
+            outputImage = applyDenoise(ciImage)
+        case "sharpen":
+            outputImage = applySharpen(ciImage)
+        case "ocrOptimized":
+            outputImage = applyOcrOptimizedPipeline(ciImage)
+        default:
+            return image
         }
         
         guard let finalCIImage = outputImage else { return nil }
@@ -97,6 +85,95 @@ public class ImageUtil {
         }
         
         return nil
+    }
+    
+    /* ----------------------------------------------------------------------- */
+    /* Filter Helpers                                                          */
+    /* ----------------------------------------------------------------------- */
+    
+    /**
+     Applies a grayscale filter using CIPhotoEffectMono.
+     Desaturates the image while preserving luminance values.
+     
+     - Parameter input: The source CIImage to filter.
+     - Returns: The grayscale CIImage, or nil if the filter is unavailable.
+     */
+    private static func applyGrayscale(_ input: CIImage) -> CIImage? {
+        guard let filter = CIFilter(name: "CIPhotoEffectMono") else { return nil }
+        filter.setValue(input, forKey: kCIInputImageKey)
+        return filter.outputImage
+    }
+    
+    /**
+     Applies a high-contrast monochrome filter using CIPhotoEffectNoir.
+     Creates a dramatic black & white effect ideal for document scanning.
+     
+     - Parameter input: The source CIImage to filter.
+     - Returns: The monochrome CIImage, or nil if the filter is unavailable.
+     */
+    private static func applyMonochrome(_ input: CIImage) -> CIImage? {
+        guard let filter = CIFilter(name: "CIPhotoEffectNoir") else { return nil }
+        filter.setValue(input, forKey: kCIInputImageKey)
+        return filter.outputImage
+    }
+    
+    /**
+     Applies noise reduction using CINoiseReduction.
+     Reduces speckle noise in images captured in low-light or with high ISO.
+     Useful for improving OCR accuracy on noisy photographs.
+     
+     - Parameter input: The source CIImage to filter.
+     - Returns: The denoised CIImage, or nil if the filter is unavailable.
+     - Note: Uses inputNoiseLevel=0.02 and inputSharpness=0.4 for balanced results.
+     */
+    private static func applyDenoise(_ input: CIImage) -> CIImage? {
+        guard let filter = CIFilter(name: "CINoiseReduction") else { return nil }
+        filter.setValue(input, forKey: kCIInputImageKey)
+        filter.setValue(0.02, forKey: "inputNoiseLevel")
+        filter.setValue(0.4, forKey: "inputSharpness")
+        return filter.outputImage
+    }
+    
+    /**
+     Applies luminance-based sharpening using CISharpenLuminance.
+     Enhances edge clarity without amplifying color artifacts.
+     Improves OCR accuracy on blurry or soft-focused text.
+     
+     - Parameter input: The source CIImage to filter.
+     - Returns: The sharpened CIImage, or nil if the filter is unavailable.
+     - Note: Uses sharpness=0.8 for noticeable but not over-aggressive enhancement.
+     */
+    private static func applySharpen(_ input: CIImage) -> CIImage? {
+        guard let filter = CIFilter(name: "CISharpenLuminance") else { return nil }
+        filter.setValue(input, forKey: kCIInputImageKey)
+        filter.setValue(0.8, forKey: kCIInputSharpnessKey)
+        return filter.outputImage
+    }
+    
+    /**
+     Applies the full OCR optimization pipeline: denoise → sharpen → monochrome.
+     
+     This is the recommended filter for maximum text recognition accuracy:
+     1. **Denoise**: Removes noise that would otherwise be amplified by sharpening.
+     2. **Sharpen**: Enhances edge clarity for better character recognition.
+     3. **Monochrome**: High-contrast B&W improves OCR engine performance.
+     
+     - Parameter input: The source CIImage to process.
+     - Returns: The fully processed CIImage, or the input if any step fails.
+     */
+    private static func applyOcrOptimizedPipeline(_ input: CIImage) -> CIImage? {
+        var processed = input
+        
+        // Step 1: Denoise
+        if let denoised = applyDenoise(processed) { processed = denoised }
+        
+        // Step 2: Sharpen
+        if let sharpened = applySharpen(processed) { processed = sharpened }
+        
+        // Step 3: Monochrome (high contrast B&W)
+        if let mono = applyMonochrome(processed) { processed = mono }
+        
+        return processed
     }
     
     /* ----------------------------------------------------------------------- */

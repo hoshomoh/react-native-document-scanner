@@ -50,8 +50,15 @@ export interface BaseOptions {
    * - `monochrome`: High-contrast black & white (best for OCR).
    * - `denoise`: Reduces image noise (improves OCR on noisy photos).
    * - `sharpen`: Enhances edge clarity (improves OCR on blurry text).
+   * - `ocrOptimized`: Full pipeline: denoise → sharpen → monochrome (best accuracy).
    */
-  filter?: 'color' | 'grayscale' | 'monochrome' | 'denoise' | 'sharpen';
+  filter?:
+    | 'color'
+    | 'grayscale'
+    | 'monochrome'
+    | 'denoise'
+    | 'sharpen'
+    | 'ocrOptimized';
   /** Whether to include the base64 string in the result. Default is false. */
   includeBase64?: boolean;
   /** Whether to perform OCR and include text/blocks. */

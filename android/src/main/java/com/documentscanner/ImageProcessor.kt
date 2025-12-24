@@ -159,7 +159,7 @@ class ImageProcessor(private val context: Context) {
 
     /**
      * Applies color or convolution filters to the bitmap.
-     * Supports: "grayscale", "monochrome" (high contrast), "denoise", "sharpen".
+     * Supports: "grayscale", "monochrome" (high contrast), "denoise", "sharpen", "ocrOptimized".
      */
     private fun applyFilter(src: Bitmap, filterType: String?): Bitmap {
         return when (filterType) {
@@ -167,8 +167,24 @@ class ImageProcessor(private val context: Context) {
             "monochrome" -> applyColorMatrixFilter(src, createMonochromeMatrix())
             "denoise" -> applyConvolutionFilter(src, DENOISE_KERNEL)
             "sharpen" -> applyConvolutionFilter(src, SHARPEN_KERNEL)
+            "ocrOptimized" -> applyOcrOptimizedPipeline(src)
             else -> src
         }
+    }
+    
+    /**
+     * Full OCR optimization pipeline: denoise → sharpen → monochrome.
+     * Best for maximizing text recognition accuracy.
+     */
+    private fun applyOcrOptimizedPipeline(src: Bitmap): Bitmap {
+        var result = src
+        // Step 1: Denoise
+        result = applyConvolutionFilter(result, DENOISE_KERNEL)
+        // Step 2: Sharpen
+        result = applyConvolutionFilter(result, SHARPEN_KERNEL)
+        // Step 3: Monochrome (high contrast B&W)
+        result = applyColorMatrixFilter(result, createMonochromeMatrix())
+        return result
     }
     
     /**

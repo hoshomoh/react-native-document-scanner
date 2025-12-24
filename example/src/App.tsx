@@ -19,7 +19,13 @@ import {
   type ProcessOptions,
 } from '@hoshomoh/react-native-document-scanner';
 
-type FilterType = 'color' | 'grayscale' | 'monochrome';
+type FilterType =
+  | 'color'
+  | 'grayscale'
+  | 'monochrome'
+  | 'denoise'
+  | 'sharpen'
+  | 'ocrOptimized';
 type FormatType = 'jpg' | 'png';
 
 /* Helper Components - defined outside App to prevent re-creation on render */
@@ -189,7 +195,16 @@ export default function App() {
 
         <OptionRow label="Filter">
           <SegmentedControl
-            values={['color', 'grayscale', 'monochrome'] as FilterType[]}
+            values={
+              [
+                'color',
+                'grayscale',
+                'monochrome',
+                'denoise',
+                'sharpen',
+                'ocrOptimized',
+              ] as FilterType[]
+            }
             selected={filter}
             onSelect={setFilter}
           />
