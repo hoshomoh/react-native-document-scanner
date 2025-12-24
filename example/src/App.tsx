@@ -10,25 +10,21 @@ import {
   TouchableOpacity,
   Switch,
   TextInput,
+  Modal,
 } from 'react-native';
 import {
   scanDocuments,
   processDocuments,
+  Filter,
+  Format,
   type ScanResult,
   type ScanOptions,
   type ProcessOptions,
+  type FilterType,
+  type FormatType,
 } from '@hoshomoh/react-native-document-scanner';
 
-type FilterType =
-  | 'color'
-  | 'grayscale'
-  | 'monochrome'
-  | 'denoise'
-  | 'sharpen'
-  | 'ocrOptimized';
-type FormatType = 'jpg' | 'png';
-
-/* Helper Components - defined outside App to prevent re-creation on render */
+/* Helper Components */
 const OptionRow = ({
   label,
   children,
@@ -42,35 +38,31 @@ const OptionRow = ({
   </View>
 );
 
-function SegmentedControl<T extends string>({
-  values,
+/**
+ * Radio group using native Switch components.
+ * Only one option can be selected at a time.
+ */
+function RadioGroup<T extends string>({
+  options,
   selected,
   onSelect,
+  labels,
 }: {
-  values: T[];
+  options: T[];
   selected: T;
   onSelect: (v: T) => void;
+  labels?: Record<T, string>;
 }) {
   return (
-    <View style={styles.segmentedControl}>
-      {values.map((value) => (
-        <TouchableOpacity
-          key={value}
-          style={[
-            styles.segmentButton,
-            selected === value && styles.segmentButtonActive,
-          ]}
-          onPress={() => onSelect(value)}
-        >
-          <Text
-            style={[
-              styles.segmentText,
-              selected === value && styles.segmentTextActive,
-            ]}
-          >
-            {value}
-          </Text>
-        </TouchableOpacity>
+    <View style={styles.radioGroup}>
+      {options.map((option) => (
+        <View key={option} style={styles.radioRow}>
+          <Text style={styles.radioLabel}>{labels?.[option] ?? option}</Text>
+          <Switch
+            value={selected === option}
+            onValueChange={() => onSelect(option)}
+          />
+        </View>
       ))}
     </View>
   );
@@ -78,6 +70,7 @@ function SegmentedControl<T extends string>({
 
 export default function App() {
   const [results, setResults] = React.useState<ScanResult[]>([]);
+  const [isSettingsVisible, setIsSettingsVisible] = React.useState(false);
 
   /* Options State */
   const [maxPageCount, setMaxPageCount] = React.useState('5');
@@ -85,7 +78,7 @@ export default function App() {
   const [format, setFormat] = React.useState<FormatType>('jpg');
   const [filter, setFilter] = React.useState<FilterType>('color');
   const [includeBase64, setIncludeBase64] = React.useState(false);
-  const [includeText, setIncludeText] = React.useState(false);
+  const [includeText, setIncludeText] = React.useState(true);
 
   const handleScan = async () => {
     const options: ScanOptions = {
@@ -97,11 +90,8 @@ export default function App() {
       includeText,
     };
 
-    console.log('Scanning with options:', options);
-
     try {
       const scannedResults = await scanDocuments(options);
-      console.log('Scanned Results:', scannedResults);
       setResults(scannedResults);
     } catch (e: any) {
       console.error('Scan failed:', e);
@@ -112,27 +102,17 @@ export default function App() {
     try {
       const result = await launchImageLibrary({
         mediaType: 'photo',
-        selectionLimit: 0, // 0 for unlimited
+        selectionLimit: 0,
         includeBase64: false,
       });
 
-      if (result.didCancel) {
-        console.log('User cancelled image picker');
-        return;
-      }
+      if (result.didCancel || !result.assets) return;
 
-      if (result.errorCode) {
-        console.error('ImagePicker Error: ', result.errorMessage);
-        return;
-      }
+      const uris = result.assets
+        .map((asset) => asset.uri)
+        .filter((uri): uri is string => !!uri);
 
-      if (result.assets) {
-        const uris = result.assets
-          .map((asset) => asset.uri)
-          .filter((uri): uri is string => !!uri);
-
-        await processImages(uris);
-      }
+      await processImages(uris);
     } catch (e) {
       console.error('Failed to select images:', e);
     }
@@ -148,11 +128,8 @@ export default function App() {
       includeText,
     };
 
-    console.log('Processing with options:', options);
-
     try {
       const processedResults = await processDocuments(options);
-      console.log('Processed Results:', processedResults);
       setResults(processedResults);
     } catch (e: any) {
       console.error('Processing failed:', e);
@@ -161,89 +138,129 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      {/* Options Panel */}
-      <View style={styles.optionsPanel}>
-        <Text style={styles.panelTitle}>Scan Options</Text>
-
-        <OptionRow label="Max Pages">
-          <TextInput
-            style={styles.textInput}
-            value={maxPageCount}
-            onChangeText={setMaxPageCount}
-            keyboardType="number-pad"
-            placeholder="5"
-          />
-        </OptionRow>
-
-        <OptionRow label="Quality">
-          <TextInput
-            style={styles.textInput}
-            value={quality}
-            onChangeText={setQuality}
-            keyboardType="decimal-pad"
-            placeholder="0.8"
-          />
-        </OptionRow>
-
-        <OptionRow label="Format">
-          <SegmentedControl
-            values={['jpg', 'png'] as FormatType[]}
-            selected={format}
-            onSelect={setFormat}
-          />
-        </OptionRow>
-
-        <OptionRow label="Filter">
-          <SegmentedControl
-            values={
-              [
-                'color',
-                'grayscale',
-                'monochrome',
-                'denoise',
-                'sharpen',
-                'ocrOptimized',
-              ] as FilterType[]
-            }
-            selected={filter}
-            onSelect={setFilter}
-          />
-        </OptionRow>
-
-        <OptionRow label="Include Base64">
-          <Switch value={includeBase64} onValueChange={setIncludeBase64} />
-        </OptionRow>
-
-        <OptionRow label="Include Text (OCR)">
-          <Switch value={includeText} onValueChange={setIncludeText} />
-        </OptionRow>
-
-        {/* Scan Button */}
-        <TouchableOpacity style={styles.scanButton} onPress={handleScan}>
-          <Text style={styles.scanButtonText}>📷 Scan Document</Text>
-        </TouchableOpacity>
-
-        {/* Pick Images Button */}
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Doc Scanner</Text>
         <TouchableOpacity
-          style={[styles.scanButton, styles.processButton]}
-          onPress={handleSelectImages}
+          style={styles.settingsIconButton}
+          onPress={() => setIsSettingsVisible(true)}
         >
-          <Text style={styles.scanButtonText}>🖼️ Select from Library</Text>
+          <Text style={styles.settingsIcon}>⚙️</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Main Controls - Side by Side */}
+      <View style={styles.mainControls}>
+        <TouchableOpacity style={styles.actionButton} onPress={handleScan}>
+          <Text style={styles.actionButtonText}>📷 Scan</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.actionButton, styles.secondaryButton]}
+          onPress={handleSelectImages}
+        >
+          <Text style={styles.actionButtonText}>🖼️ Gallery</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Settings Modal */}
+      <Modal
+        visible={isSettingsVisible}
+        animationType="slide"
+        presentationStyle="pageSheet"
+        onRequestClose={() => setIsSettingsVisible(false)}
+      >
+        <SafeAreaView style={styles.modalContainer}>
+          <View style={styles.modalHeader}>
+            <Text style={styles.modalTitle}>Scan Settings</Text>
+            <TouchableOpacity onPress={() => setIsSettingsVisible(false)}>
+              <Text style={styles.closeButton}>Done</Text>
+            </TouchableOpacity>
+          </View>
+
+          <ScrollView style={styles.settingsScroll}>
+            <View style={styles.settingsContent}>
+              <OptionRow label="Max Pages">
+                <TextInput
+                  style={styles.textInput}
+                  value={maxPageCount}
+                  onChangeText={setMaxPageCount}
+                  keyboardType="number-pad"
+                  placeholder="5"
+                />
+              </OptionRow>
+
+              <OptionRow label="Quality">
+                <TextInput
+                  style={styles.textInput}
+                  value={quality}
+                  onChangeText={setQuality}
+                  keyboardType="decimal-pad"
+                  placeholder="0.8"
+                />
+              </OptionRow>
+
+              <View style={styles.radioSection}>
+                <Text style={styles.radioSectionTitle}>Format</Text>
+                <RadioGroup
+                  options={[Format.JPG, Format.PNG]}
+                  selected={format}
+                  onSelect={setFormat}
+                  labels={{
+                    [Format.JPG]: 'JPEG (Smaller)',
+                    [Format.PNG]: 'PNG (Lossless)',
+                  }}
+                />
+              </View>
+
+              <View style={styles.radioSection}>
+                <Text style={styles.radioSectionTitle}>Filter</Text>
+                <RadioGroup
+                  options={[
+                    Filter.COLOR,
+                    Filter.GRAYSCALE,
+                    Filter.MONOCHROME,
+                    Filter.DENOISE,
+                    Filter.SHARPEN,
+                    Filter.OCR_OPTIMIZED,
+                  ]}
+                  selected={filter}
+                  onSelect={setFilter}
+                  labels={{
+                    [Filter.COLOR]: 'Color (Original)',
+                    [Filter.GRAYSCALE]: 'Grayscale',
+                    [Filter.MONOCHROME]: 'Monochrome (B&W)',
+                    [Filter.DENOISE]: 'Denoise',
+                    [Filter.SHARPEN]: 'Sharpen',
+                    [Filter.OCR_OPTIMIZED]: 'OCR Optimized ⭐',
+                  }}
+                />
+              </View>
+
+              <OptionRow label="Include Base64">
+                <Switch
+                  value={includeBase64}
+                  onValueChange={setIncludeBase64}
+                />
+              </OptionRow>
+
+              <OptionRow label="Include Text (OCR)">
+                <Switch value={includeText} onValueChange={setIncludeText} />
+              </OptionRow>
+            </View>
+          </ScrollView>
+        </SafeAreaView>
+      </Modal>
 
       {/* Results */}
       <ScrollView contentContainerStyle={styles.scrollContent}>
         {results.length === 0 && (
           <Text style={styles.placeholder}>
-            No scans yet. Configure options and tap Scan.
+            No scans yet. tap Scan or Gallery above.
           </Text>
         )}
         {results.map((result, index) => (
           <View key={index} style={styles.pageContainer}>
             <Text style={styles.pageTitle}>Page {index + 1}</Text>
-
-            {/* Image */}
             {result.uri && (
               <Image
                 source={{ uri: result.uri }}
@@ -251,8 +268,6 @@ export default function App() {
                 resizeMode="contain"
               />
             )}
-
-            {/* OCR Text */}
             {result.text && (
               <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>Extracted Text:</Text>
@@ -263,11 +278,11 @@ export default function App() {
                 </View>
               </View>
             )}
-
-            {/* Metadata Blocks */}
-            {result.blocks && result.blocks.length > 0 && (
+            {result.blocks && (
               <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Metadata Blocks:</Text>
+                <Text style={styles.sectionTitle}>
+                  Metadata Blocks ({result.blocks.length}):
+                </Text>
                 <View style={styles.codeWrapper}>
                   <Text selectable style={styles.codeContent}>
                     {JSON.stringify(result.blocks, null, 2)}
@@ -285,136 +300,199 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-  },
-  optionsPanel: {
     backgroundColor: '#fff',
-    padding: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
   },
-  panelTitle: {
-    fontSize: 18,
+  header: {
+    paddingHorizontal: 20,
+    paddingVertical: 15,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  headerTitle: {
+    fontSize: 22,
+    fontWeight: '800',
+    color: '#1a1a1a',
+  },
+  settingsIconButton: {
+    padding: 8,
+    backgroundColor: '#f5f5f5',
+    borderRadius: 20,
+  },
+  settingsIcon: {
+    fontSize: 20,
+  },
+  mainControls: {
+    flexDirection: 'row',
+    padding: 16,
+    gap: 12,
+  },
+  actionButton: {
+    flex: 1,
+    backgroundColor: '#007AFF',
+    paddingVertical: 15,
+    borderRadius: 12,
+    alignItems: 'center',
+    shadowColor: '#007AFF',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+    elevation: 4,
+  },
+  secondaryButton: {
+    backgroundColor: '#5856D6',
+    shadowColor: '#5856D6',
+  },
+  actionButtonText: {
+    color: '#fff',
+    fontSize: 16,
+    fontWeight: '700',
+  },
+  modalContainer: {
+    flex: 1,
+    backgroundColor: '#fff',
+  },
+  modalHeader: {
+    padding: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  modalTitle: {
+    fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 12,
+  },
+  closeButton: {
+    fontSize: 17,
+    color: '#007AFF',
+    fontWeight: '600',
+  },
+  settingsScroll: {
+    flex: 1,
+  },
+  settingsContent: {
+    padding: 20,
   },
   optionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 12,
+    paddingVertical: 12,
   },
   optionLabel: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#333',
+    fontWeight: '500',
   },
   textInput: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 6,
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    width: 80,
+    borderColor: '#ddd',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 8,
+    width: 70,
     textAlign: 'center',
-    fontSize: 14,
+    fontSize: 15,
+    backgroundColor: '#fafafa',
   },
-  segmentedControl: {
+  radioGroup: {
+    width: '100%',
+  },
+  radioRow: {
     flexDirection: 'row',
-    borderRadius: 6,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: '#007AFF',
-  },
-  segmentButton: {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    backgroundColor: '#fff',
-  },
-  segmentButtonActive: {
-    backgroundColor: '#007AFF',
-  },
-  segmentText: {
-    fontSize: 12,
-    color: '#007AFF',
-  },
-  segmentTextActive: {
-    color: '#fff',
-  },
-  scanButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 14,
-    borderRadius: 10,
-    marginTop: 10,
+    justifyContent: 'space-between',
     alignItems: 'center',
+    paddingVertical: 8,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#f0f0f0',
   },
-  processButton: {
-    backgroundColor: '#5856D6',
+  radioLabel: {
+    fontSize: 15,
+    color: '#444',
+    flex: 1,
   },
-  scanButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
+  radioSection: {
+    marginTop: 15,
+    marginBottom: 5,
+    borderWidth: 1,
+    borderColor: '#eee',
+    borderRadius: 12,
+    padding: 15,
+    backgroundColor: '#f9f9f9',
+  },
+  radioSectionTitle: {
+    fontSize: 15,
+    fontWeight: '700',
+    color: '#1a1a1a',
+    marginBottom: 8,
   },
   scrollContent: {
-    alignItems: 'center',
-    padding: 20,
-    paddingBottom: 100,
+    padding: 16,
+    paddingBottom: 40,
   },
   placeholder: {
-    fontSize: 14,
-    color: '#888',
-    marginTop: 40,
+    fontSize: 15,
+    color: '#999',
+    textAlign: 'center',
+    marginTop: 60,
   },
   pageContainer: {
     width: '100%',
     marginBottom: 30,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ddd',
-    paddingBottom: 20,
-    alignItems: 'center',
+    backgroundColor: '#fff',
+    padding: 16,
+    borderRadius: 16,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 10,
+    elevation: 2,
   },
   pageTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
+    fontSize: 18,
+    fontWeight: '700',
+    marginBottom: 12,
+    color: '#1a1a1a',
   },
   image: {
-    width: 300,
-    height: 400,
-    marginVertical: 10,
-    backgroundColor: '#eee',
-    borderRadius: 8,
+    width: '100%',
+    height: 350,
+    borderRadius: 12,
+    backgroundColor: '#f8f8f8',
   },
   sectionContainer: {
-    width: '100%',
-    marginTop: 15,
+    marginTop: 20,
   },
   sectionTitle: {
-    fontSize: 14,
+    fontSize: 15,
     fontWeight: '600',
-    marginBottom: 5,
-    color: '#333',
+    marginBottom: 8,
+    color: '#444',
   },
   textWrapper: {
-    backgroundColor: '#f5f5f5',
-    padding: 10,
-    borderRadius: 8,
+    backgroundColor: '#f8f8f8',
+    padding: 12,
+    borderRadius: 10,
     borderWidth: 1,
-    borderColor: '#e0e0e0',
+    borderColor: '#eee',
   },
   textContent: {
-    fontSize: 14,
-    fontFamily: 'Courier',
-    color: '#000',
+    fontSize: 13,
+    lineHeight: 18,
+    color: '#222',
   },
   codeWrapper: {
-    backgroundColor: '#1e1e1e',
-    padding: 10,
-    borderRadius: 8,
+    backgroundColor: '#1a1a1a',
+    padding: 12,
+    borderRadius: 10,
   },
   codeContent: {
-    fontSize: 10,
-    fontFamily: 'Courier New',
-    color: '#00ff00',
+    fontSize: 11,
+    color: '#4ade80',
+    fontFamily: 'Courier',
   },
 });

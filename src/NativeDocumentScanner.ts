@@ -1,6 +1,24 @@
 import { TurboModuleRegistry, type TurboModule } from 'react-native';
 
 /**
+ * Type union of all available filter values.
+ * Required for React Native Codegen compatibility.
+ */
+export type FilterType =
+  | 'color'
+  | 'grayscale'
+  | 'monochrome'
+  | 'denoise'
+  | 'sharpen'
+  | 'ocrOptimized';
+
+/**
+ * Type union of all available format values.
+ * Required for React Native Codegen compatibility.
+ */
+export type FormatType = 'jpg' | 'png';
+
+/**
  * Represents a discrete block of text recognized by the OCR engine.
  * Useful for mapping text to specific regions on the image.
  */
@@ -41,8 +59,8 @@ export interface ScanResult {
 export interface BaseOptions {
   /** Compression quality (0.0 to 1.0) for JPEG. Default is 1.0. */
   quality?: number;
-  /** Output image format. Default is 'jpg'. */
-  format?: 'png' | 'jpg';
+  /** Output image format. Use the `Format` constant for type-safe values. Default is 'jpg'. */
+  format?: FormatType;
   /**
    * Post-processing filter to apply.
    * - `color`: No filter (default).
@@ -52,13 +70,7 @@ export interface BaseOptions {
    * - `sharpen`: Enhances edge clarity (improves OCR on blurry text).
    * - `ocrOptimized`: Full pipeline: denoise → sharpen → monochrome (best accuracy).
    */
-  filter?:
-    | 'color'
-    | 'grayscale'
-    | 'monochrome'
-    | 'denoise'
-    | 'sharpen'
-    | 'ocrOptimized';
+  filter?: FilterType;
   /** Whether to include the base64 string in the result. Default is false. */
   includeBase64?: boolean;
   /** Whether to perform OCR and include text/blocks. */
