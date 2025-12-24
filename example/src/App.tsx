@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { launchImageLibrary } from 'react-native-image-picker';
 import {
   StyleSheet,
   ScrollView,
@@ -12,8 +13,10 @@ import {
 } from 'react-native';
 import {
   scanDocuments,
+  processDocuments,
   type ScanResult,
   type ScanOptions,
+  type ProcessOptions,
 } from '@hoshomoh/react-native-document-scanner';
 
 type FilterType = 'color' | 'grayscale' | 'monochrome';
@@ -99,6 +102,57 @@ export default function App() {
     }
   };
 
+  const handleSelectImages = async () => {
+    try {
+      const result = await launchImageLibrary({
+        mediaType: 'photo',
+        selectionLimit: 0, // 0 for unlimited
+        includeBase64: false,
+      });
+
+      if (result.didCancel) {
+        console.log('User cancelled image picker');
+        return;
+      }
+
+      if (result.errorCode) {
+        console.error('ImagePicker Error: ', result.errorMessage);
+        return;
+      }
+
+      if (result.assets) {
+        const uris = result.assets
+          .map((asset) => asset.uri)
+          .filter((uri): uri is string => !!uri);
+
+        await processImages(uris);
+      }
+    } catch (e) {
+      console.error('Failed to select images:', e);
+    }
+  };
+
+  const processImages = async (uris: string[]) => {
+    const options: ProcessOptions = {
+      images: uris,
+      quality: parseFloat(quality) || 0.8,
+      format,
+      filter,
+      includeBase64,
+      includeText,
+    };
+
+    console.log('Processing with options:', options);
+
+    try {
+      const processedResults = await processDocuments(options);
+      console.log('Processed Results:', processedResults);
+      setResults(processedResults);
+    } catch (e: any) {
+      console.error('Processing failed:', e);
+    }
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Options Panel */}
@@ -152,6 +206,14 @@ export default function App() {
         {/* Scan Button */}
         <TouchableOpacity style={styles.scanButton} onPress={handleScan}>
           <Text style={styles.scanButtonText}>📷 Scan Document</Text>
+        </TouchableOpacity>
+
+        {/* Pick Images Button */}
+        <TouchableOpacity
+          style={[styles.scanButton, styles.processButton]}
+          onPress={handleSelectImages}
+        >
+          <Text style={styles.scanButtonText}>🖼️ Select from Library</Text>
         </TouchableOpacity>
       </View>
 
@@ -269,6 +331,9 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     marginTop: 10,
     alignItems: 'center',
+  },
+  processButton: {
+    backgroundColor: '#5856D6',
   },
   scanButtonText: {
     color: '#fff',
