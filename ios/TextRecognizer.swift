@@ -26,7 +26,7 @@ public class TextRecognizer {
     
       /* guard statement ensures we don't process invalid image data */
       guard let cgImage = image.cgImage else {
-        Logger.warn(LogMessages.missingCGImage)
+        Logger.warn("Could not retrieve CGImage from input.")
         return nil
       }
       
@@ -44,7 +44,7 @@ public class TextRecognizer {
         
         /* Validate results */
         guard let observations = request.results else {
-          Logger.info(LogMessages.noTextFound)
+          Logger.info("No text found in image.")
           return nil
         }
         
@@ -139,7 +139,7 @@ public class TextRecognizer {
         
         return (text: structuredText, blocks: blocks)
       } catch {
-        Logger.error(LogMessages.recognitionFailed(error))
+        Logger.error("Text recognition request failed: \(error.localizedDescription)")
         return nil
       }
   }

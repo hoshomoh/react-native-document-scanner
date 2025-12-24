@@ -130,14 +130,14 @@ public class ImageUtil {
         let fileURL = createTempFileURL(format: format)
         
         guard let data = imageData(from: image, format: format, quality: quality) else {
-            throw ScannerError.fileSystemError("Could not generate data for image.")
+            throw ScannerError.operationFailed("Could not generate data for image.")
         }
         
         do {
             try data.write(to: fileURL)
             return fileURL.absoluteString
         } catch {
-            throw ScannerError.fileSystemError(error.localizedDescription)
+            throw ScannerError.operationFailed(error.localizedDescription)
         }
     }
     
