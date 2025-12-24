@@ -27,14 +27,15 @@ class TextRecognizer {
     companion object {
         
         /**
-         * Internal data class representing a text element with its bounding box.
+         * Internal data class representing a text element with its bounding box and confidence.
          */
         private data class TextElement(
             val text: String,
             val left: Double,
             val top: Double,
             val width: Double,
-            val height: Double
+            val height: Double,
+            val confidence: Double
         )
 
         /**
@@ -64,12 +65,19 @@ class TextRecognizer {
                     for (line in block.lines) {
                         val box = line.boundingBox ?: continue
                         // Normalize coordinates to 0-1 range
+                        // ML Kit provides confidence at the Element level, we average for line-level
+                        val lineConfidence = if (line.elements.isNotEmpty()) {
+                            line.elements.map { it.confidence.toDouble() }.average()
+                        } else {
+                            1.0 // Default to 1.0 if no elements
+                        }
                         allElements.add(TextElement(
                             text = line.text,
                             left = box.left.toDouble() / imageWidth,
                             top = box.top.toDouble() / imageHeight,
                             width = box.width().toDouble() / imageWidth,
-                            height = box.height().toDouble() / imageHeight
+                            height = box.height().toDouble() / imageHeight,
+                            confidence = lineConfidence
                         ))
                     }
                 }
@@ -152,6 +160,14 @@ class TextRecognizer {
                     frameMap.putDouble("height", box.height().toDouble() / imageHeight)
                     
                     blockMap.putMap("frame", frameMap)
+                    
+                    // Calculate average confidence from all elements in the block
+                    val allElements = block.lines.flatMap { it.elements }
+                    if (allElements.isNotEmpty()) {
+                        val avgConfidence = allElements.map { it.confidence.toDouble() }.average()
+                        blockMap.putDouble("confidence", avgConfidence)
+                    }
+                    
                     blocksArray.pushMap(blockMap)
                 }
                 resultMap.putArray("blocks", blocksArray)

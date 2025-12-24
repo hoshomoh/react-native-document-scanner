@@ -72,6 +72,21 @@ public class ImageUtil {
                 filter.setValue(ciImage, forKey: kCIInputImageKey)
                 outputImage = filter.outputImage
             }
+        } else if filterType == "denoise" {
+            /* CINoiseReduction reduces image noise, improving OCR on noisy photos */
+            if let filter = CIFilter(name: "CINoiseReduction") {
+                filter.setValue(ciImage, forKey: kCIInputImageKey)
+                filter.setValue(0.02, forKey: "inputNoiseLevel")
+                filter.setValue(0.4, forKey: "inputSharpness")
+                outputImage = filter.outputImage
+            }
+        } else if filterType == "sharpen" {
+            /* CISharpenLuminance enhances edge clarity for blurry text */
+            if let filter = CIFilter(name: "CISharpenLuminance") {
+                filter.setValue(ciImage, forKey: kCIInputImageKey)
+                filter.setValue(0.8, forKey: kCIInputSharpnessKey)
+                outputImage = filter.outputImage
+            }
         }
         
         guard let finalCIImage = outputImage else { return nil }

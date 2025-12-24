@@ -158,38 +158,106 @@ class ImageProcessor(private val context: Context) {
     }
 
     /**
-     * Applies color filters to the bitmap.
-     * Supports "grayscale" and "monochrome" (high contrast).
+     * Applies color or convolution filters to the bitmap.
+     * Supports: "grayscale", "monochrome" (high contrast), "denoise", "sharpen".
      */
     private fun applyFilter(src: Bitmap, filterType: String?): Bitmap {
-        val width = src.width
-        val height = src.height
-        val dest = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        return when (filterType) {
+            "grayscale" -> applyColorMatrixFilter(src, createGrayscaleMatrix())
+            "monochrome" -> applyColorMatrixFilter(src, createMonochromeMatrix())
+            "denoise" -> applyConvolutionFilter(src, DENOISE_KERNEL)
+            "sharpen" -> applyConvolutionFilter(src, SHARPEN_KERNEL)
+            else -> src
+        }
+    }
+    
+    /**
+     * Applies a ColorMatrix filter (for grayscale, monochrome).
+     */
+    private fun applyColorMatrixFilter(src: Bitmap, matrix: ColorMatrix): Bitmap {
+        val dest = Bitmap.createBitmap(src.width, src.height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(dest)
         val paint = Paint()
-        
-        // 0-saturation matrix for Grayscale
-        val colorMatrix = ColorMatrix()
-        colorMatrix.setSaturation(0f)
-        
-        if (filterType == "monochrome") {
-             // For monochrome, we apply high contrast on top of grayscale
-             // This simulates a "scanned document" look
-             val contrast = ColorMatrix()
-             val scale = 1.3f
-             val translate = (-.5f * scale + .5f) * 255f
-             contrast.set(floatArrayOf(
-                 scale, 0f, 0f, 0f, translate,
-                 0f, scale, 0f, 0f, translate,
-                 0f, 0f, scale, 0f, translate,
-                 0f, 0f, 0f, 1f, 0f
-             ))
-             colorMatrix.postConcat(contrast)
-        }
-
-        val filter = ColorMatrixColorFilter(colorMatrix)
-        paint.colorFilter = filter
+        paint.colorFilter = ColorMatrixColorFilter(matrix)
         canvas.drawBitmap(src, 0f, 0f, paint)
         return dest
+    }
+    
+    private fun createGrayscaleMatrix(): ColorMatrix {
+        val matrix = ColorMatrix()
+        matrix.setSaturation(0f)
+        return matrix
+    }
+    
+    private fun createMonochromeMatrix(): ColorMatrix {
+        val matrix = ColorMatrix()
+        matrix.setSaturation(0f)
+        val contrast = ColorMatrix()
+        val scale = 1.3f
+        val translate = (-.5f * scale + .5f) * 255f
+        contrast.set(floatArrayOf(
+            scale, 0f, 0f, 0f, translate,
+            0f, scale, 0f, 0f, translate,
+            0f, 0f, scale, 0f, translate,
+            0f, 0f, 0f, 1f, 0f
+        ))
+        matrix.postConcat(contrast)
+        return matrix
+    }
+    
+    /**
+     * Applies a 3x3 convolution kernel to the bitmap.
+     * Used for denoise (blur) and sharpen effects.
+     */
+    private fun applyConvolutionFilter(src: Bitmap, kernel: FloatArray): Bitmap {
+        val width = src.width
+        val height = src.height
+        val pixels = IntArray(width * height)
+        val result = IntArray(width * height)
+        src.getPixels(pixels, 0, width, 0, 0, width, height)
+        
+        // 3x3 kernel offsets
+        val offsets = arrayOf(
+            intArrayOf(-1, -1), intArrayOf(0, -1), intArrayOf(1, -1),
+            intArrayOf(-1, 0), intArrayOf(0, 0), intArrayOf(1, 0),
+            intArrayOf(-1, 1), intArrayOf(0, 1), intArrayOf(1, 1)
+        )
+        
+        for (y in 1 until height - 1) {
+            for (x in 1 until width - 1) {
+                var r = 0f; var g = 0f; var b = 0f
+                for (k in 0 until 9) {
+                    val px = pixels[(y + offsets[k][1]) * width + (x + offsets[k][0])]
+                    r += ((px shr 16) and 0xFF) * kernel[k]
+                    g += ((px shr 8) and 0xFF) * kernel[k]
+                    b += (px and 0xFF) * kernel[k]
+                }
+                val a = (pixels[y * width + x] shr 24) and 0xFF
+                result[y * width + x] = (a shl 24) or
+                    (r.toInt().coerceIn(0, 255) shl 16) or
+                    (g.toInt().coerceIn(0, 255) shl 8) or
+                    b.toInt().coerceIn(0, 255)
+            }
+        }
+        
+        val dest = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
+        dest.setPixels(result, 0, width, 0, 0, width, height)
+        return dest
+    }
+    
+    companion object {
+        // Box blur kernel (simple denoise/smooth)
+        private val DENOISE_KERNEL = floatArrayOf(
+            1/9f, 1/9f, 1/9f,
+            1/9f, 1/9f, 1/9f,
+            1/9f, 1/9f, 1/9f
+        )
+        
+        // Sharpen kernel (enhances edges)
+        private val SHARPEN_KERNEL = floatArrayOf(
+            0f, -1f, 0f,
+            -1f, 5f, -1f,
+            0f, -1f, 0f
+        )
     }
 }

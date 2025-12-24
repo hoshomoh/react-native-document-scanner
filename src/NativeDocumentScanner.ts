@@ -13,6 +13,12 @@ export interface TextBlock {
    * (0,0) is usually top-left.
    */
   frame: { x: number; y: number; width: number; height: number };
+  /**
+   * OCR confidence score (0.0 to 1.0).
+   * Higher values indicate more reliable recognition.
+   * Useful for LLM post-processing to weight or filter results.
+   */
+  confidence?: number;
 }
 
 /**
@@ -42,8 +48,10 @@ export interface BaseOptions {
    * - `color`: No filter (default).
    * - `grayscale`: Desaturates the image.
    * - `monochrome`: High-contrast black & white (best for OCR).
+   * - `denoise`: Reduces image noise (improves OCR on noisy photos).
+   * - `sharpen`: Enhances edge clarity (improves OCR on blurry text).
    */
-  filter?: 'color' | 'grayscale' | 'monochrome';
+  filter?: 'color' | 'grayscale' | 'monochrome' | 'denoise' | 'sharpen';
   /** Whether to include the base64 string in the result. Default is false. */
   includeBase64?: boolean;
   /** Whether to perform OCR and include text/blocks. */

@@ -63,7 +63,10 @@ public class TextRecognizer {
                 height: obs.boundingBox.size.height
             )
             
-            return TextBlock(text: candidate.string, frame: frame)
+            /* Extract confidence score (0.0 - 1.0) from the candidate */
+            let confidence = Double(candidate.confidence)
+            
+            return TextBlock(text: candidate.string, frame: frame, confidence: confidence)
         }
         
         /* ------------------------------------------------------------- */
