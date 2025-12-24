@@ -43,7 +43,7 @@ public class ImageProcessor {
         do {
             uri = try ImageUtil.saveImage(filteredImage, quality: options.quality, format: options.format)
         } catch {
-            Logger.error(LogMessages.errorSaving(error))
+            Logger.error("Error saving image: \(error.localizedDescription)")
         }
         
         /* 3. Generate Base64 (if requested) */

@@ -43,7 +43,7 @@ public class DocumentScannerManager: NSObject, VNDocumentCameraViewControllerDel
       if let topController = self.getTopMostViewController() {
         topController.present(scannerViewController, animated: true, completion: nil)
       } else {
-        self.rejectError(.uiError("Could not find top view controller."))
+        self.rejectError(.operationFailed("Could not find top view controller."))
       }
     }
   }
@@ -61,7 +61,7 @@ public class DocumentScannerManager: NSObject, VNDocumentCameraViewControllerDel
       guard let self = self else { return }
       
       guard let opts = ProcessOptions(from: options as? [String: Any]) else {
-        self.rejectError(.invalidOptions("Missing 'images' array in options"))
+        self.rejectError(.configurationError("Missing 'images' array in options"))
         return
       }
       
@@ -69,7 +69,7 @@ public class DocumentScannerManager: NSObject, VNDocumentCameraViewControllerDel
       let images = opts.images.compactMap { ImageUtil.loadImage(from: $0) }
       
       if images.isEmpty {
-        self.rejectError(.noValidImages)
+        self.rejectError(.configurationError("Could not load any valid images"))
         return
       }
       
@@ -99,7 +99,7 @@ public class DocumentScannerManager: NSObject, VNDocumentCameraViewControllerDel
 
   public func documentCameraViewController(_ controller: VNDocumentCameraViewController, didFailWithError error: Error) {
     controller.dismiss(animated: true) { [weak self] in
-      self?.rejectError(.scanError(error.localizedDescription))
+      self?.rejectError(.operationFailed(error.localizedDescription))
     }
   }
   

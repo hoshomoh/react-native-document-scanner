@@ -6,7 +6,7 @@
   "types": "./lib/typescript/src/index.d.ts",
   "exports": {
     ".": {
-      "source": "./src/index.tsx",
+      "source": "./src/index.ts",
       "types": "./lib/typescript/src/index.d.ts",
       "default": "./lib/module/index.js"
     },
@@ -16,8 +16,10 @@
     "src",
     "lib",
     "ios",
+    "android",
     "*.podspec",
     "!ios/build",
+    "!android/build",
     "!**/__tests__",
     "!**/__fixtures__",
     "!**/__mocks__",
@@ -60,8 +62,8 @@
     "@eslint/compat": "^2.0.0",
     "@eslint/eslintrc": "^3.3.3",
     "@eslint/js": "^9.39.2",
-    "@react-native/babel-preset": "0.83.0",
-    "@react-native/eslint-config": "0.83.0",
+    "@react-native/babel-preset": "0.83.1",
+    "@react-native/eslint-config": "0.83.1",
     "@types/jest": "^30.0.0",
     "@types/react": "^19.2.7",
     "commitlint": "^20.2.0",
@@ -70,12 +72,12 @@
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "jest": "^30.2.0",
-    "lefthook": "^2.0.11",
+    "lefthook": "^2.0.12",
     "prettier": "^3.7.4",
     "react": "19.2.3",
-    "react-native": "0.83.0",
+    "react-native": "0.83.1",
     "react-native-builder-bob": "^0.40.17",
-    "turbo": "^2.6.3",
+    "turbo": "^2.7.2",
     "typescript": "^5.9.3"
   },
   "peerDependencies": {

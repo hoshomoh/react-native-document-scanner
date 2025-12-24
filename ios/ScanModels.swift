@@ -12,6 +12,7 @@ public struct Frame: Encodable {
 public struct TextBlock: Encodable {
     public let text: String
     public let frame: Frame
+    public let confidence: Double?
 }
 
 /** Represents the final result of a scanned page. */
@@ -32,7 +33,7 @@ public struct ScanResult: Encodable {
         if let blocks = blocks {
             /* Manually map blocks to ensure correct structure. */
             dict["blocks"] = blocks.map { block in
-                return [
+                var blockDict: [String: Any] = [
                     "text": block.text,
                     "frame": [
                         "x": block.frame.x,
@@ -41,6 +42,10 @@ public struct ScanResult: Encodable {
                         "height": block.frame.height
                     ]
                 ]
+                if let confidence = block.confidence {
+                    blockDict["confidence"] = confidence
+                }
+                return blockDict
             }
         }
         

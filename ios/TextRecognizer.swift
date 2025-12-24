@@ -26,7 +26,7 @@ public class TextRecognizer {
     
       /* guard statement ensures we don't process invalid image data */
       guard let cgImage = image.cgImage else {
-        Logger.warn(LogMessages.missingCGImage)
+        Logger.warn("Could not retrieve CGImage from input.")
         return nil
       }
       
@@ -44,7 +44,7 @@ public class TextRecognizer {
         
         /* Validate results */
         guard let observations = request.results else {
-          Logger.info(LogMessages.noTextFound)
+          Logger.info("No text found in image.")
           return nil
         }
         
@@ -63,7 +63,10 @@ public class TextRecognizer {
                 height: obs.boundingBox.size.height
             )
             
-            return TextBlock(text: candidate.string, frame: frame)
+            /* Extract confidence score (0.0 - 1.0) from the candidate */
+            let confidence = Double(candidate.confidence)
+            
+            return TextBlock(text: candidate.string, frame: frame, confidence: confidence)
         }
         
         /* ------------------------------------------------------------- */
@@ -139,7 +142,7 @@ public class TextRecognizer {
         
         return (text: structuredText, blocks: blocks)
       } catch {
-        Logger.error(LogMessages.recognitionFailed(error))
+        Logger.error("Text recognition request failed: \(error.localizedDescription)")
         return nil
       }
   }
