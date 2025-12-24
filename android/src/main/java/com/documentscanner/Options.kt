@@ -58,7 +58,10 @@ class ProcessOptions(
                 val array = options.getArray("images")
                 if (array != null) {
                     for (i in 0 until array.size()) {
-                        imagesList.add(array.getString(i))
+                        val str = array.getString(i)
+                        if (str != null) {
+                            imagesList.add(str)
+                        }
                     }
                 }
             }

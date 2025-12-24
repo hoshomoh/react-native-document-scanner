@@ -41,7 +41,7 @@ class TextRecognizer {
                 resultMap.putString("text", visionText.text)
 
                 val blocksArray = Arguments.createArray()
-                for (block in visionText.textBlocks) {
+                visionText.textBlocks.forEach { block ->
                     val blockMap = Arguments.createMap()
                     blockMap.putString("text", block.text)
                     

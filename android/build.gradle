@@ -1,29 +1,42 @@
 buildscript {
-  ext.safeAppExt = { prop, fallback ->
-    rootProject.ext.has(prop) ? rootProject.ext.get(prop) : fallback
+  // Helper function to get version from app's rootProject or fall back to library's gradle.properties
+  ext.getExtOrDefault = { name ->
+    return rootProject.ext.has(name) ? rootProject.ext.get(name) : project.properties['DocumentScanner_' + name]
   }
+
   repositories {
     google()
     mavenCentral()
   }
+
   dependencies {
-    classpath("com.android.tools.build:gradle:${project.findProperty('DocumentScanner_gradlePluginVersion') ?: '8.2.1'}")
-    classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.findProperty('DocumentScanner_kotlinVersion') ?: '1.9.22'}")
+    classpath "com.android.tools.build:gradle:${getExtOrDefault('gradlePluginVersion')}"
+    // noinspection DifferentKotlinGradleVersion
+    classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:${getExtOrDefault('kotlinVersion')}"
   }
 }
 
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
+apply plugin: 'com.facebook.react'
+
+// Helper function that returns an Integer for SDK version properties
+def getExtOrIntegerDefault(name) {
+  return rootProject.ext.has(name) ? rootProject.ext.get(name) : (project.properties["DocumentScanner_" + name]).toInteger()
+}
 
 android {
-  namespace project.findProperty('DocumentScanner_namespace') ?: "com.documentscanner"
-  compileSdkVersion safeAppExt('compileSdkVersion', project.findProperty('DocumentScanner_compileSdkVersion')?.toInteger() ?: 34)
+  namespace "com.documentscanner"
+
+  compileSdkVersion getExtOrIntegerDefault("compileSdkVersion")
 
   defaultConfig {
-    minSdkVersion safeAppExt('minSdkVersion', project.findProperty('DocumentScanner_minSdkVersion')?.toInteger() ?: 24)
-    targetSdkVersion safeAppExt('targetSdkVersion', project.findProperty('DocumentScanner_targetSdkVersion')?.toInteger() ?: 34)
-    versionCode 1
-    versionName "1.0"
+    minSdkVersion getExtOrIntegerDefault("minSdkVersion")
+    targetSdkVersion getExtOrIntegerDefault("targetSdkVersion")
+  }
+
+  buildFeatures {
+    buildConfig true
   }
 
   buildTypes {
@@ -33,7 +46,7 @@ android {
   }
 
   lintOptions {
-    disable 'GradleCompatible'
+    disable "GradleCompatible"
   }
 
   compileOptions {
@@ -43,19 +56,17 @@ android {
 }
 
 repositories {
-  mavenLocal()
-  maven {
-    // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
-    url("$rootDir/../node_modules/react-native/android")
-  }
   google()
   mavenCentral()
 }
 
+def kotlin_version = getExtOrDefault("kotlinVersion")
+
 dependencies {
   implementation "com.facebook.react:react-android"
-  implementation "com.google.android.gms:play-services-mlkit-document-scanner:${project.findProperty('DocumentScanner_mlkitScannerVersion') ?: '16.0.0'}"
-  implementation "com.google.android.gms:play-services-mlkit-text-recognition:${project.findProperty('DocumentScanner_mlkitTextRecognitionVersion') ?: '19.0.0'}"
-  implementation "androidx.exifinterface:exifinterface:${project.findProperty('DocumentScanner_exifInterfaceVersion') ?: '1.3.7'}"
+  implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
+  implementation "com.google.android.gms:play-services-mlkit-document-scanner:${getExtOrDefault('mlkitScannerVersion')}"
+  implementation "com.google.android.gms:play-services-mlkit-text-recognition:${getExtOrDefault('mlkitTextRecognitionVersion')}"
+  implementation "androidx.exifinterface:exifinterface:${getExtOrDefault('exifInterfaceVersion')}"
+  implementation "org.jetbrains.kotlinx:kotlinx-coroutines-play-services:${getExtOrDefault('kotlinCoroutinesPlayServicesVersion')}"
 }
-

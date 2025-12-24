@@ -9,6 +9,7 @@ import com.google.mlkit.vision.documentscanner.GmsDocumentScanningResult
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
 /**
  * Native module for Document Scanner.
@@ -37,8 +38,8 @@ class DocumentScannerModule(reactContext: ReactApplicationContext) :
    * @param options Dictionary containing scan configuration (maxPageCount, quality, format, etc.)
    * @param promise React Native promise to resolve with results or reject with error
    */
-  override fun scanDocuments(options: ReadableMap?, promise: Promise?) {
-    val activity = currentActivity
+  override fun scanDocuments(options: ReadableMap?, promise: Promise) {
+    val activity: Activity? = reactApplicationContext.currentActivity
     if (activity == null) {
       val error = ScannerError.OperationFailed("Activity doesn't exist")
       promise?.reject(error.code, error.message)
@@ -77,9 +78,9 @@ class DocumentScannerModule(reactContext: ReactApplicationContext) :
       
       // Launch the scanner intent
       scanner.getStartScanIntent(activity)
-        .addOnSuccessListener { intent ->
+        .addOnSuccessListener(activity) { intentSender ->
           try {
-            reactApplicationContext.startActivityForResult(intent, START_SCAN_REQUEST_CODE, null)
+            activity.startIntentSenderForResult(intentSender, START_SCAN_REQUEST_CODE, null, 0, 0, 0)
           } catch (e: Exception) {
             val error = ScannerError.OperationFailed("Failed to start scanner activity: ${e.message}")
             Logger.error(error.message, e)
@@ -110,7 +111,7 @@ class DocumentScannerModule(reactContext: ReactApplicationContext) :
    * @param options Dictionary containing input images and processing configuration.
    * @param promise React Native promise to resolve with results.
    */
-  override fun processDocuments(options: ReadableMap?, promise: Promise?) {
+  override fun processDocuments(options: ReadableMap?, promise: Promise) {
     val processOptions = ProcessOptions.from(options)
     
     // Validate inputs immediately
@@ -143,7 +144,7 @@ class DocumentScannerModule(reactContext: ReactApplicationContext) :
   /**
    * Handles the result from the native scanner activity.
    */
-  override fun onActivityResult(activity: Activity?, requestCode: Int, resultCode: Int, data: Intent?) {
+  override fun onActivityResult(activity: Activity, requestCode: Int, resultCode: Int, data: Intent?) {
     if (requestCode == START_SCAN_REQUEST_CODE) {
       if (scanPromise == null) {
           Logger.warn("Received onActivityResult but scanPromise is null. Ignoring.")
@@ -205,8 +206,8 @@ class DocumentScannerModule(reactContext: ReactApplicationContext) :
     }
   }
 
-  override fun onNewIntent(intent: Intent?) {
-      // No-op: We only care about onActivityResult
+  override fun onNewIntent(intent: Intent) {
+    // No-op: We only care about onActivityResult
   }
 
   companion object {
