@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		25A778B5D738DBF4AF6DE298 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
-		44CA1C739DC96BED1D9B5454 /* libPods-DocumentScannerExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 945D3AA9BAD481A21744D6AA /* libPods-DocumentScannerExample.a */; };
+		28FC3F0FF59FFBFD2EFE0F09 /* libPods-DocumentScannerExample.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E530FE1C86F71F80ECF76C0A /* libPods-DocumentScannerExample.a */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 /* End PBXBuildFile section */
@@ -19,11 +19,11 @@
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = DocumentScannerExample/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = DocumentScannerExample/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = DocumentScannerExample/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
-		35A9DEC740314B4EC5D759AA /* Pods-DocumentScannerExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DocumentScannerExample.debug.xcconfig"; path = "Target Support Files/Pods-DocumentScannerExample/Pods-DocumentScannerExample.debug.xcconfig"; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = DocumentScannerExample/AppDelegate.swift; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = DocumentScannerExample/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		945D3AA9BAD481A21744D6AA /* libPods-DocumentScannerExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DocumentScannerExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		CF2E2AE412963DE177990141 /* Pods-DocumentScannerExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DocumentScannerExample.release.xcconfig"; path = "Target Support Files/Pods-DocumentScannerExample/Pods-DocumentScannerExample.release.xcconfig"; sourceTree = "<group>"; };
+		A05EA8A3696BE818818E755C /* Pods-DocumentScannerExample.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DocumentScannerExample.release.xcconfig"; path = "Target Support Files/Pods-DocumentScannerExample/Pods-DocumentScannerExample.release.xcconfig"; sourceTree = "<group>"; };
+		BAEAE7DB71F6944C118F64EB /* Pods-DocumentScannerExample.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DocumentScannerExample.debug.xcconfig"; path = "Target Support Files/Pods-DocumentScannerExample/Pods-DocumentScannerExample.debug.xcconfig"; sourceTree = "<group>"; };
+		E530FE1C86F71F80ECF76C0A /* libPods-DocumentScannerExample.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-DocumentScannerExample.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -32,7 +32,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				44CA1C739DC96BED1D9B5454 /* libPods-DocumentScannerExample.a in Frameworks */,
+				28FC3F0FF59FFBFD2EFE0F09 /* libPods-DocumentScannerExample.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -55,7 +55,7 @@
 			isa = PBXGroup;
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				945D3AA9BAD481A21744D6AA /* libPods-DocumentScannerExample.a */,
+				E530FE1C86F71F80ECF76C0A /* libPods-DocumentScannerExample.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -92,8 +92,8 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				35A9DEC740314B4EC5D759AA /* Pods-DocumentScannerExample.debug.xcconfig */,
-				CF2E2AE412963DE177990141 /* Pods-DocumentScannerExample.release.xcconfig */,
+				BAEAE7DB71F6944C118F64EB /* Pods-DocumentScannerExample.debug.xcconfig */,
+				A05EA8A3696BE818818E755C /* Pods-DocumentScannerExample.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -105,13 +105,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "DocumentScannerExample" */;
 			buildPhases = (
-				FD6F42055DA91D236F76E809 /* [CP] Check Pods Manifest.lock */,
+				EE98705130E209EECCA2408F /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				33AE3956B8A8D288D1EF6B8F /* [CP] Embed Pods Frameworks */,
-				5A9993AFAE786938F5D2AA42 /* [CP] Copy Pods Resources */,
+				7DBC396FF137BE855D88FE70 /* [CP] Embed Pods Frameworks */,
+				BCE43E34EE02D83AFE37B79D /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -183,7 +183,7 @@
 			shellPath = /bin/sh;
 			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"$REACT_NATIVE_PATH/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"$REACT_NATIVE_PATH/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"\\\"$WITH_ENVIRONMENT\\\" \\\"$REACT_NATIVE_XCODE\\\"\"\n";
 		};
-		33AE3956B8A8D288D1EF6B8F /* [CP] Embed Pods Frameworks */ = {
+		7DBC396FF137BE855D88FE70 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -200,7 +200,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DocumentScannerExample/Pods-DocumentScannerExample-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5A9993AFAE786938F5D2AA42 /* [CP] Copy Pods Resources */ = {
+		BCE43E34EE02D83AFE37B79D /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -217,7 +217,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DocumentScannerExample/Pods-DocumentScannerExample-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		FD6F42055DA91D236F76E809 /* [CP] Check Pods Manifest.lock */ = {
+		EE98705130E209EECCA2408F /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -255,7 +255,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 35A9DEC740314B4EC5D759AA /* Pods-DocumentScannerExample.debug.xcconfig */;
+			baseConfigurationReference = BAEAE7DB71F6944C118F64EB /* Pods-DocumentScannerExample.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -289,7 +289,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = CF2E2AE412963DE177990141 /* Pods-DocumentScannerExample.release.xcconfig */;
+			baseConfigurationReference = A05EA8A3696BE818818E755C /* Pods-DocumentScannerExample.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

@@ -95,13 +95,42 @@ class TextRecognizer {
                     for (line in lines) {
                         val ref = line.firstOrNull() ?: continue
                         
-                        // Calculate vertical centers
-                        val center1 = ref.top + ref.height / 2
-                        val center2 = element.top + element.height / 2
-                        val heightAvg = (ref.height + element.height) / 2
+                        /*
+                         * HEURISTIC: Vertical Overlap & Height Similarity
+                         *
+                         * Research: O'Gorman (1993) Docstrum & Breuel (2002).
+                         * We use geometric clustering based on vertical overlap.
+                         */
                         
-                        // HEURISTIC: If centers are within threshold, consider them the same line
-                        if (abs(center1 - center2) < heightAvg / OCRConfiguration.VERTICAL_MERGE_DIVISOR) {
+                        val y1_bottom = ref.top + ref.height
+                        val y1_top = ref.top
+                        
+                        val y2_bottom = element.top + element.height
+                        val y2_top = element.top
+                        
+                        // Note: In Android (ML Kit), coordinates are usually top-left origin. 
+                        // So top is smaller than bottom.
+                        // Overlap calculation:
+                        val intersectionTop = max(y1_top, y2_top)
+                        val intersectionBottom = min(y1_bottom, y2_bottom)
+                        val intersectionHeight = max(0.0, intersectionBottom - intersectionTop)
+                        
+                        val minHeight = min(ref.height, element.height)
+                        val maxHeight = max(ref.height, element.height)
+                        
+                        /*
+                         * Condition 1: Significant Vertical Overlap (> 50% of the smaller height)
+                         * Ensures items are on the same "visual line".
+                         */
+                        val isVerticallyAligned = (intersectionHeight / minHeight) > 0.5
+                        
+                        /*
+                         * Condition 2: Height Similarity (> 50% ratio)
+                         * Prevents merging distinct semantic references like small footer text with large headers.
+                         */
+                        val isSimilarHeight = (minHeight / maxHeight) > 0.5
+                        
+                        if (isVerticallyAligned && isSimilarHeight) {
                             line.add(element)
                             added = true
                             break
@@ -121,18 +150,35 @@ class TextRecognizer {
                     // Sort elements within line by X (left-to-right)
                     val sortedLine = line.sortedBy { it.left }
                     
+                    // Calculate average height of the line
+                    val avgLineHeight = if (line.isNotEmpty()) line.map { it.height }.average() else 0.0
+                    
                     val lineString = StringBuilder()
                     var lastXEnd = 0.0
                     
-                    for (element in sortedLine) {
+                    for ((index, element) in sortedLine.withIndex()) {
                         val xStart = element.left
-                        val gap = xStart - lastXEnd
                         
-                        // HEURISTIC: If gap > threshold, insert proportional spaces
-                        if (gap > OCRConfiguration.HORIZONTAL_SPACING_THRESHOLD && lineString.isNotEmpty()) {
-                            val spaces = max(1, (gap * OCRConfiguration.SPACE_SCALING_FACTOR).toInt())
-                            val cappedSpaces = min(spaces, OCRConfiguration.MAX_SPACES)
-                            lineString.append(" ".repeat(cappedSpaces))
+                        if (index > 0) {
+                            val gap = xStart - lastXEnd
+                            
+                            /*
+                             * HEURISTIC: Adaptive Horizontal Spacing
+                             * Research: Kshetry (2021) - Adaptive thresholding.
+                             * Use line height as proxy for em-space.
+                             */
+                            if (gap > (avgLineHeight * 0.5)) {
+                                /*
+                                 * Scale spaces.
+                                 * Assume 1 "space" char is ~0.3 of height.
+                                 */
+                                val estimatedSpaceWidth = avgLineHeight * 0.3
+                                val spaces = max(1, (gap / estimatedSpaceWidth).toInt())
+                                val cappedSpaces = min(spaces, OCRConfiguration.MAX_SPACES)
+                                lineString.append(" ".repeat(cappedSpaces))
+                            } else if (gap > 0) {
+                                lineString.append(" ")
+                            }
                         }
                         
                         lineString.append(element.text)
