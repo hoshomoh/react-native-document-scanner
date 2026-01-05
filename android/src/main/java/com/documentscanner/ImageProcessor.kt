@@ -51,7 +51,7 @@ class ImageProcessor(private val context: Context) {
 
             // 1. Apply Filters
             val filter = options.filter
-            if (filter == "grayscale" || filter == "monochrome") {
+            if (filter != "color") {
                 Logger.log("Applying filter: $filter")
                 bitmap = applyFilter(bitmap, filter)
             }

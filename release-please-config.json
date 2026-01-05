@@ -3,7 +3,8 @@
     ".": {
       "release-type": "node",
       "pull-request-title-pattern": "chore: release ${version}",
-      "tag-separator": "v"
+      "tag-separator": "@",
+      "include-v-in-tag": true
     }
   }
 }

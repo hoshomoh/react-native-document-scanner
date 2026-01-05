@@ -1,25 +1,26 @@
 # react-native-document-scanner
 
-A powerful, high-performance React Native library for scanning documents and extracting text using native platform APIs.
+A powerful, high-performance React Native library for scanning documents and extracting text using native platform APIs. Optimized for structured documents like receipts, invoices, and forms.
 
 ## Features
 
-- 📸 **Document Scanning**: Native UI for scanning documents with auto-detection and perspective correction
-- 🖼️ **Image Processing**: 6 filter presets including OCR-optimized pipeline
-- 📝 **OCR (Text Recognition)**: Extract text with layout preservation and confidence scores
-- ⚙️ **Batch Processing**: Process existing images from file system or Base64
-- 🚀 **TurboModules**: Built with React Native New Architecture for maximum performance
-- 📱 **Cross-Platform**: Full support for iOS (VisionKit) and Android (ML Kit)
+- 📸 **Document Scanning**: Native UI for scanning documents with auto-detection and perspective correction (VisionKit on iOS, ML Kit on Android).
+- 🖼️ **Image Processing**: High-performance filters including Grayscale, Monochrome, Denoise, and Sharpen.
+- 📝 **Dual-Engine OCR**: Choose between raw platform output (V1) and layout-preserving heuristic extraction (V2).
+- 🧠 **Adaptive Heuristics**: Intelligent line clustering and adaptive spacing for perfect horizontal alignment on receipts.
+- ⚙️ **Batch Processing**: Headless processing of existing images from file system, Content URIs, or Base64.
+- 🚀 **TurboModules**: Built from the ground up for the React Native New Architecture.
+- 📱 **Cross-Platform Parity**: Identical coordinate systems and configuration logic across iOS and Android.
 
 ## Platform Support
 
-| Feature             | iOS              | Android                   |
-| ------------------- | ---------------- | ------------------------- |
-| Document Scanning   | VisionKit        | ML Kit Document Scanner   |
-| OCR                 | Vision Framework | ML Kit Text Recognition   |
-| Image Filters       | CoreImage        | ColorMatrix + Convolution |
-| Layout Preservation | ✅               | ✅                        |
-| Confidence Scores   | ✅               | ✅                        |
+| Feature             | iOS              | Android                 |
+| ------------------- | ---------------- | ----------------------- |
+| Document Scanning   | VisionKit        | ML Kit Document Scanner |
+| OCR Engine          | Vision Framework | ML Kit Text Recognition |
+| Coordinate Origin   | **Top-Left**     | **Top-Left**            |
+| Logic Architecture  | Swift            | Kotlin (Coroutines)     |
+| Layout Preservation | ✅ (V2)          | ✅ (V2)                 |
 
 ---
 
@@ -39,9 +40,7 @@ cd ios && pod install
 
 ### Android Setup
 
-No additional setup required. The library uses ML Kit which is downloaded on-demand.
-
-> **Note**: On first use, ML Kit may need to download the document scanner model (~20MB).
+No additional setup required. Google Play Services will automatically manage ML Kit models.
 
 ---
 
@@ -49,54 +48,53 @@ No additional setup required. The library uses ML Kit which is downloaded on-dem
 
 ### 1. Scan Documents (Camera UI)
 
-Opens the native system scanner UI.
+Opens the system scanner. Best for manual document capture.
 
 ```typescript
 import { scanDocuments } from '@hoshomoh/react-native-document-scanner';
 
-try {
-  const results = await scanDocuments({
-    maxPageCount: 5,
-    quality: 0.8,
-    format: 'jpg',
-    filter: 'ocrOptimized', // Best for text extraction
-    includeText: true,
-  });
-
-  results.forEach((page, index) => {
-    console.log(`Page ${index + 1}:`, page.uri);
-    console.log('Text:', page.text);
-    console.log('Blocks:', page.blocks);
-  });
-} catch (error) {
-  console.error('Scan failed:', error);
-}
+const results = await scanDocuments({
+  maxPageCount: 5,
+  textVersion: 2, // Use V2 for receipt layout extraction
+  filter: 'ocrOptimized', // Applies denoise -> sharpen -> monochrome
+  includeText: true,
+});
 ```
 
 ### 2. Process Existing Images (Headless)
 
-Run filters and OCR on images you already have.
+Batch process images already on the device.
 
 ```typescript
 import { processDocuments } from '@hoshomoh/react-native-document-scanner';
 
-try {
-  const results = await processDocuments({
-    images: [
-      'file:///path/to/image1.jpg',
-      'content://media/external/images/123',
-      'data:image/png;base64,iVBORw0KGgo...',
-    ],
-    filter: 'sharpen',
-    includeText: true,
-    includeBase64: true,
-  });
-
-  console.log('Processed results:', results);
-} catch (error) {
-  console.error('Processing failed:', error);
-}
+const results = await processDocuments({
+  images: ['file:///path/to/receipt.jpg'],
+  textVersion: 2,
+  includeText: true,
+});
 ```
+
+---
+
+## OCR Engine Versions
+
+The library provides two distinct OCR extraction strategies via the `textVersion` parameter:
+
+### Version 1: Raw Output
+
+- **iOS**: Uses standard Apple Vision `VNRecognizeTextRequest` with language correction enabled.
+- **Android**: Returns raw `textBlocks` from ML Kit.
+- **Best For**: General prose, paragraphs, and unstructured text.
+
+### Version 2: Heuristic Enhanced (Default)
+
+Our custom **LineCluster** strategy with adaptive growth constraints.
+
+- **Adaptive Clustering**: Distinguishes between stacked lines and skewed text using horizontal overlap analysis.
+- **Spatial Reconstruction**: Injects precise spacing between columns based on median character heights.
+- **Layout Preservation**: Ensures items and prices on a receipt stay aligned on the same horizontal string.
+- **Best For**: Receipts, Invoices, Tables, and Structured Forms.
 
 ---
 
@@ -104,61 +102,20 @@ try {
 
 ### `scanDocuments(options?: ScanOptions): Promise<ScanResult[]>`
 
-Opens the native document scanner UI and returns scanned pages.
-
 ### `processDocuments(options: ProcessOptions): Promise<ScanResult[]>`
 
-Processes existing images without opening the camera UI.
+### Options
 
----
-
-## Options
-
-### `ScanOptions`
-
-| Property        | Type             | Default     | Description                           |
-| --------------- | ---------------- | ----------- | ------------------------------------- |
-| `maxPageCount`  | `number`         | `undefined` | Maximum pages to scan (0 = unlimited) |
-| `quality`       | `number`         | `1.0`       | JPEG compression quality (0.0-1.0)    |
-| `format`        | `'jpg' \| 'png'` | `'jpg'`     | Output image format                   |
-| `filter`        | `FilterType`     | `'color'`   | Image filter to apply                 |
-| `includeBase64` | `boolean`        | `false`     | Include Base64 string in result       |
-| `includeText`   | `boolean`        | `false`     | Perform OCR and include text/blocks   |
-
-### `ProcessOptions`
-
-| Property        | Type             | Default      | Description                                               |
-| --------------- | ---------------- | ------------ | --------------------------------------------------------- |
-| `images`        | `string[]`       | **Required** | Array of image sources (file URI, content URI, or Base64) |
-| `quality`       | `number`         | `1.0`        | JPEG compression quality (0.0-1.0)                        |
-| `format`        | `'jpg' \| 'png'` | `'jpg'`      | Output image format                                       |
-| `filter`        | `FilterType`     | `'color'`    | Image filter to apply                                     |
-| `includeBase64` | `boolean`        | `false`      | Include Base64 string in result                           |
-| `includeText`   | `boolean`        | `true`       | Perform OCR (defaults to true for processing)             |
-
----
-
-## Filters
-
-The library supports 6 image filters:
-
-| Filter         | Description                                   | Best For                      |
-| -------------- | --------------------------------------------- | ----------------------------- |
-| `color`        | No filter (original)                          | Photos, colored documents     |
-| `grayscale`    | Desaturated image                             | General documents             |
-| `monochrome`   | High-contrast B&W                             | Clean text documents          |
-| `denoise`      | Noise reduction                               | Noisy photos, low-light scans |
-| `sharpen`      | Edge enhancement                              | Blurry text, soft focus       |
-| `ocrOptimized` | Full pipeline: denoise → sharpen → monochrome | **Best OCR accuracy**         |
-
-### Example: Using ocrOptimized
-
-```typescript
-const results = await scanDocuments({
-  filter: 'ocrOptimized',
-  includeText: true,
-});
-```
+| Property        | Type             | Default   | Description                                                              |
+| --------------- | ---------------- | --------- | ------------------------------------------------------------------------ |
+| `textVersion`   | `1 \| 2`         | `2`       | OCR Engine version (1 = Raw, 2 = Heuristic)                              |
+| `includeText`   | `boolean`        | `false`   | Perform OCR and return structured text                                   |
+| `filter`        | `FilterType`     | `'color'` | `color`, `grayscale`, `monochrome`, `denoise`, `sharpen`, `ocrOptimized` |
+| `quality`       | `number`         | `1.0`     | Image compression quality (0.1 - 1.0)                                    |
+| `format`        | `'jpg' \| 'png'` | `'jpg'`   | Output file format                                                       |
+| `maxPageCount`  | `number`         | `0`       | (Scan only) Limit pages (0 = unlimited). Max 100.                        |
+| `includeBase64` | `boolean`        | `false`   | Returns binary data as Base64 string                                     |
+| `images`        | `string[]`       | **Req.**  | (Process only) Local URIs or Base64 data strings                         |
 
 ---
 
@@ -166,124 +123,72 @@ const results = await scanDocuments({
 
 ### `ScanResult`
 
-```typescript
-interface ScanResult {
-  /** Local file URI of the processed image */
-  uri?: string;
-
-  /** Base64 string (if includeBase64 is true) */
-  base64?: string;
-
-  /** Full, layout-preserved text (if includeText is true) */
-  text?: string;
-
-  /** Structured text blocks with metadata */
-  blocks?: TextBlock[];
-}
-```
+| Property | Type          | Description                                              |
+| :------- | :------------ | :------------------------------------------------------- |
+| `uri`    | `string`      | Local temporary file path of the processed image.        |
+| `text`   | `string`      | The full extracted text. V2 preserves the visual layout. |
+| `blocks` | `TextBlock[]` | Granular metadata for each recognized text segment.      |
+| `base64` | `string`      | Optional binary data (if `includeBase64` is true).       |
 
 ### `TextBlock`
 
+The coordinate system is **unified** across iOS and Android:
+
+- **Range**: `0.0` to `1.0` (Normalized).
+- **Origin**: `(0,0)` is the **Top-Left** corner.
+- **Sorting**: Blocks are returned in a natural **top-to-bottom reading order**.
+
 ```typescript
 interface TextBlock {
-  /** The recognized text content */
-  text: string;
-
-  /** Normalized bounding box (0-1 range) */
+  text: string; // Content of the block
+  confidence: number; // Engine reliability (0.0 to 1.0)
   frame: {
-    x: number; // Left edge (0 = left, 1 = right)
-    y: number; // Top edge (0 = top, 1 = bottom)
-    width: number; // Normalized width
-    height: number; // Normalized height
+    x: number; // Horizontal offset (0 = left)
+    y: number; // Vertical offset (0 = top)
+    width: number; // Normalized width (fraction of image)
+    height: number; // Normalized height (fraction of image)
   };
-
-  /** OCR confidence score (0.0-1.0) */
-  confidence?: number;
 }
 ```
 
 ---
 
-## OCR Features
+## OCR Engine Deep-Dive
 
-### Layout Preservation
+We solve the "Jumbled OCR" problem common in mobile scanning by providing two specialized engines:
 
-The OCR engine preserves spatial layout of text, making it ideal for:
+### V1: Raw Platform (Deterministic)
 
-- Receipts (item + price on same line)
-- Tables
-- Multi-column documents
+Returns the raw output from Apple Vision (with language correction) or Google ML Kit.
 
-Example output:
+- **iOS Strategy**: Uses standard top-candidates from observations.
+- **Android Strategy**: Uses standard `TextBlocks`.
+- **Latency**: Minimal.
 
-```
-Milk                    $3.99
-Bread                   $2.49
-Tax                     $0.52
----------------------------------
-Total                   $7.00
-```
+### V2: Adaptive Heuristic (Layout-Aware)
 
-### Confidence Scores
+Our custom **LineCluster** algorithm rebuilds the document structure from word-level elements.
 
-Each text block includes a confidence score (0.0-1.0) indicating OCR reliability:
-
-```typescript
-results.forEach((page) => {
-  page.blocks?.forEach((block) => {
-    if (block.confidence && block.confidence > 0.8) {
-      console.log('High confidence:', block.text);
-    } else {
-      console.log('Low confidence:', block.text);
-    }
-  });
-});
-```
+- **Collinear Analysis**: Groups words into logical lines even if slightly skewed.
+- **Adaptive Spacing**: Measures median character heights to inject proportional whitespace between text columns (perfect for receipts).
+- **Growth Constraints**: Prevents vertically adjacent lines from merging while allowing horizontal growth.
 
 ---
 
-## Error Handling
+## Technical Safeguards
 
-The library throws errors for common failure cases:
-
-```typescript
-try {
-  const results = await scanDocuments();
-} catch (error) {
-  if (error.message.includes('cancelled')) {
-    console.log('User cancelled scanning');
-  } else if (error.message.includes('unavailable')) {
-    console.log('Scanner not available on this device');
-  } else {
-    console.error('Unexpected error:', error);
-  }
-}
-```
-
----
-
-## Example App
-
-The repository includes a fully-featured example app:
-
-```sh
-cd example
-yarn install
-cd ios && pod install && cd ..
-yarn ios
-# or
-yarn android
-```
+- **Multi-Threaded**: All heavy image processing and OCR operations are executed on background IO dispatchers (`Swift GCD` / `Kotlin Coroutines`).
+- **Memory Efficient**: Original bitmaps are recycled immediately, and processed images are stored in temporary cache directories to prevent OOM errors.
+- **Coordinate Parity**: We've mathematically normalized Apple's bottom-left origin to match Android's top-left origin, ensuring your UI overlays work identically on both platforms.
+- **Failsafe Normalization**: Safe division helpers prevent crashes if the device returns an image with zero-width/height metadata.
 
 ---
 
 ## Requirements
 
-- React Native 0.76+ (New Architecture required)
-- iOS 13.0+ (VisionKit)
-- Android API 21+ (ML Kit)
-
----
+- React Native 0.71+ (New Architecture recommended)
+- iOS 13.0+
+- Android API 21+
 
 ## License
 

@@ -111,7 +111,7 @@ public class DocumentScannerManager: NSObject, VNDocumentCameraViewControllerDel
       guard let self = self else { return }
 
       let opts = ScanOptions(from: self.scanOptions, fallbackPageCount: scan.pageCount)
-      let pageLimit = min(scan.pageCount, opts.maxPageCount)
+      let pageLimit = opts.maxPageCount == 0 ? scan.pageCount : min(scan.pageCount, opts.maxPageCount)
 
       /* Collect images from scan */
       var images: [UIImage] = []
