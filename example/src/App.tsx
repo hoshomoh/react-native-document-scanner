@@ -79,6 +79,7 @@ export default function App() {
   const [filter, setFilter] = React.useState<FilterType>('color');
   const [includeBase64, setIncludeBase64] = React.useState(false);
   const [includeText, setIncludeText] = React.useState(true);
+  const [textVersion, setTextVersion] = React.useState('2');
 
   const handleScan = async () => {
     const options: ScanOptions = {
@@ -88,6 +89,7 @@ export default function App() {
       filter,
       includeBase64,
       includeText,
+      textVersion: parseInt(textVersion, 10),
     };
 
     try {
@@ -126,6 +128,7 @@ export default function App() {
       filter,
       includeBase64,
       includeText,
+      textVersion: parseInt(textVersion, 10),
     };
 
     try {
@@ -246,6 +249,19 @@ export default function App() {
               <OptionRow label="Include Text (OCR)">
                 <Switch value={includeText} onValueChange={setIncludeText} />
               </OptionRow>
+
+              <View style={styles.radioSection}>
+                <Text style={styles.radioSectionTitle}>OCR Version</Text>
+                <SwitchGroup
+                  options={['1', '2']}
+                  selected={textVersion}
+                  onSelect={setTextVersion}
+                  labels={{
+                    '1': 'V1 (Raw)',
+                    '2': 'V2 (Heuristic)',
+                  }}
+                />
+              </View>
             </View>
           </ScrollView>
         </SafeAreaView>

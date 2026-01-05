@@ -33,7 +33,7 @@ class DocumentScannerModule(reactContext: ReactApplicationContext) :
   }
 
   /**
-   * launches the ML Kit Document Scanner activity.
+   * Launches the ML Kit Document Scanner activity.
    *
    * @param options Dictionary containing scan configuration (maxPageCount, quality, format, etc.)
    * @param promise React Native promise to resolve with results or reject with error
@@ -42,7 +42,7 @@ class DocumentScannerModule(reactContext: ReactApplicationContext) :
     val activity: Activity? = reactApplicationContext.currentActivity
     if (activity == null) {
       val error = ScannerError.OperationFailed("Activity doesn't exist")
-      promise?.reject(error.code, error.message)
+      promise.reject(error.code, error.message)
       return
     }
 

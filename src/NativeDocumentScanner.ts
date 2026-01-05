@@ -75,6 +75,12 @@ export interface BaseOptions {
   includeBase64?: boolean;
   /** Whether to perform OCR and include text/blocks. */
   includeText?: boolean;
+  /**
+   * Version of the text recognizer to use.
+   * - 1: Raw output (standard Vision/ML Kit behavior).
+   * - 2: Heuristic enhanced (Adaptive Clustering for layout preservation). Default.
+   */
+  textVersion?: number;
 }
 
 /**

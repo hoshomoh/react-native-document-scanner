@@ -1,17 +1,24 @@
 import Foundation
 
-/** Represents the geometric bounds of a text block. */
+/** Represents the geometric bounds of a text block in normalized coordinates (0.0 - 1.0). */
 public struct Frame: Encodable {
+    /// Horizontal position of the top-left corner.
     public let x: Double
+    /// Vertical position of the top-left corner.
     public let y: Double
+    /// Width of the bounding box.
     public let width: Double
+    /// Height of the bounding box.
     public let height: Double
 }
 
-/** Represents a recognized block of text. */
+/** Represents a recognized block of text with its position and confidence level. */
 public struct TextBlock: Encodable {
+    /// The recognized text string.
     public let text: String
+    /// The bounding box of the text.
     public let frame: Frame
+    /// The confidence level of the recognition (0.0 - 1.0).
     public let confidence: Double?
 }
 

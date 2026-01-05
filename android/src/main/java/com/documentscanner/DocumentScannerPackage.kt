@@ -7,6 +7,10 @@ import com.facebook.react.module.model.ReactModuleInfo
 import com.facebook.react.module.model.ReactModuleInfoProvider
 import java.util.HashMap
 
+/**
+ * React Native package for the Document Scanner.
+ * Registers the native module for both Legacy and New Architecture (TurboModules).
+ */
 class DocumentScannerPackage : TurboReactPackage() {
   override fun getModule(name: String, reactContext: ReactApplicationContext): NativeModule? {
     return if (name == DocumentScannerModule.NAME) {

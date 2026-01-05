@@ -25,7 +25,7 @@ import java.util.UUID
 /**
  * Utility class for image processing operations.
  * Handles loading, rotating, filtering, and running OCR on images.
- * executed on a background IO dispatcher.
+ * All operations are executed on a background IO dispatcher.
  */
 class ImageProcessor(private val context: Context) {
 
@@ -82,8 +82,8 @@ class ImageProcessor(private val context: Context) {
 
             // 4. Optical Character Recognition (OCR)
             if (options.includeText) {
-                Logger.log("Running OCR on processed image")
-                val ocrResult = TextRecognizer.processImage(context, Uri.fromFile(newFile))
+                Logger.log("Running OCR on processed image (Version ${options.textVersion})")
+                val ocrResult = TextRecognizer.processImage(context, Uri.fromFile(newFile), options.textVersion)
                 result.putString("text", ocrResult.getString("text"))
                 if (ocrResult.hasKey("blocks")) {
                     result.putArray("blocks", ocrResult.getArray("blocks"))
@@ -92,8 +92,7 @@ class ImageProcessor(private val context: Context) {
 
         } catch (e: Exception) {
             Logger.error("Failed to process image: $uriStr", e)
-             // We swallow the specific image error to allow other images in a batch to proceed,
-             // but strictly log it. The result map will contain at least the original URI.
+             // Swallow specific image error to allow other images in a batch to proceed.
         }
         
         return@withContext result
