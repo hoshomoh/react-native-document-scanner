@@ -47,8 +47,8 @@ export function processDocuments(
   return DocumentScanner.processDocuments(options);
 }
 
-export { reconstructReceipt } from './receiptReconstructor';
-export type { ReconstructOptions } from './receiptReconstructor';
+export { reconstructText } from './textReconstructor';
+export type { ReconstructOptions } from './textReconstructor';
 
 export type {
   ScanOptions,

@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`reconstructReceipt android-v1-mlkit-ocr-optimized-german-playground-receipt.json 1`] = `
+exports[`reconstructText android-v1-mlkit-ocr-optimized-german-playground-receipt.json 1`] = `
 "                         LEMITEX GMBH
                      BEILSTEINER STR. 109
                          12681 BERLIN
@@ -41,7 +41,7 @@ exports[`reconstructReceipt android-v1-mlkit-ocr-optimized-german-playground-rec
                 SOWIE HYGIENEREGELN."
 `;
 
-exports[`reconstructReceipt android-v1-mlkit-ocr-optimized-walmart-receipt.json 1`] = `
+exports[`reconstructText android-v1-mlkit-ocr-optimized-walmart-receipt.json 1`] = `
 "            Walmart*
       Save money. Live better.
                  (330 ) 339 3991
@@ -98,7 +98,7 @@ exports[`reconstructReceipt android-v1-mlkit-ocr-optimized-walmart-receipt.json 
                ***CUSTOVER COPY***"
 `;
 
-exports[`reconstructReceipt android-v2-mlkit-ocr-optimized-german-playground-receipt.json 1`] = `
+exports[`reconstructText android-v2-mlkit-ocr-optimized-german-playground-receipt.json 1`] = `
 "LEMITEX   GMBH
 BEILSTEINER  STR.    109
 12681 BERLIN
@@ -135,7 +135,7 @@ JEDER BESUCHER  UNSERE  HAUSORDNUNG
 SOWIE   HYGIENEREGELN."
 `;
 
-exports[`reconstructReceipt android-v2-mlkit-ocr-optimized-walmart-receipt.json 1`] = `
+exports[`reconstructText android-v2-mlkit-ocr-optimized-walmart-receipt.json 1`] = `
 "Walmart*
 Save  money.  Live  better.
 (330        )          339          3991
@@ -194,7 +194,7 @@ Low      Prices      You      Can     Trust.        Every      Day.
 ***CUSTOVER        COPY***"
 `;
 
-exports[`reconstructReceipt ios-v1-vnrecognize-ocr-optimized-german-playground-receipt.json 1`] = `
+exports[`reconstructText ios-v1-vnrecognize-ocr-optimized-german-playground-receipt.json 1`] = `
 "                        LEMITEX GMBH
                     BEILSTEINER STR. 109
                         12681 BERLIN
@@ -234,7 +234,7 @@ exports[`reconstructReceipt ios-v1-vnrecognize-ocr-optimized-german-playground-r
                 SOWIE HYGIENEREGELN."
 `;
 
-exports[`reconstructReceipt ios-v1-vnrecognize-ocr-optimized-primark-receipt.json 1`] = `
+exports[`reconstructText ios-v1-vnrecognize-ocr-optimized-primark-receipt.json 1`] = `
 "                    Primark
               Primark Mode Ltd & CO KG
                 Hainstrasse 21 - 23
@@ -285,7 +285,7 @@ exports[`reconstructReceipt ios-v1-vnrecognize-ocr-optimized-primark-receipt.jso
                     VIELEN DANK"
 `;
 
-exports[`reconstructReceipt ios-v2-recognizedocuments-ocr-optimized-primark-receipt.json 1`] = `
+exports[`reconstructText ios-v2-recognizedocuments-ocr-optimized-primark-receipt.json 1`] = `
 "                   Primark
               Primark Mode Ltd & CO KG
                 Hainstrasse 21  - 23
@@ -329,7 +329,7 @@ MwSt. -Betr.
           08200143258790001121025003"
 `;
 
-exports[`reconstructReceipt ios-v2-vnrecognize-ocr-optimized-german-playground-receipt.json 1`] = `
+exports[`reconstructText ios-v2-vnrecognize-ocr-optimized-german-playground-receipt.json 1`] = `
 "LEMITEX GMBH
 BEILSTEINER STR.109
 12681 BERLIN

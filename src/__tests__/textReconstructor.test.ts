@@ -1,7 +1,7 @@
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
 
-import { reconstructReceipt } from '../receiptReconstructor';
+import { reconstructText } from '../textReconstructor';
 import type { ScanMetadata, TextBlock } from '../NativeDocumentScanner';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -23,7 +23,7 @@ interface FixtureOptions {
  *   metadata      — Copy the `metadata` field from your ScanResult verbatim.
  *   text          — The raw `text` field from the ScanResult (used by V2 path).
  *   blocks        — The `blocks` array from the ScanResult (used by V1 path).
- *   options       — Optional overrides forwarded to reconstructReceipt().
+ *   options       — Optional overrides forwarded to reconstructText().
  *   expected      — If provided, the test asserts exact equality.
  *                   If null / omitted, the test uses a Jest snapshot instead.
  */
@@ -52,7 +52,7 @@ if (fixtureFiles.length === 0) {
     'No fixture files yet — paste real OCR output into src/__fixtures__/<name>.json'
   );
 } else {
-  describe('reconstructReceipt', () => {
+  describe('reconstructText', () => {
     test.each(fixtureFiles)('%s', (filename) => {
       const fixture: Fixture = JSON.parse(
         readFileSync(join(FIXTURES_DIR, filename), 'utf-8')
@@ -61,7 +61,7 @@ if (fixtureFiles.length === 0) {
       const { lineWidth, minConfidence, rowGroupingFactor } =
         fixture.options ?? {};
 
-      const result = reconstructReceipt(
+      const result = reconstructText(
         {
           metadata: fixture.metadata,
           blocks: fixture.blocks,

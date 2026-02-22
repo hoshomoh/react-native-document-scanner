@@ -41,7 +41,7 @@ export interface TextBlock {
 
 /**
  * Describes the OCR engine and configuration used to produce a ScanResult.
- * Pass the parent `ScanResult` directly to `reconstructReceipt` — it reads
+ * Pass the parent `ScanResult` directly to `reconstructText` — it reads
  * `metadata` internally to select the right reconstruction strategy.
  */
 export interface ScanMetadata {

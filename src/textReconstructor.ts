@@ -60,9 +60,9 @@ export interface ReconstructOptions {
  *
  * @example
  * const results = await scanDocuments({ includeText: true });
- * const text = reconstructReceipt(results[0]);
+ * const text = reconstructText(results[0]);
  */
-export function reconstructReceipt(
+export function reconstructText(
   scanResult: { text?: string; blocks?: TextBlock[]; metadata?: ScanMetadata },
   options: ReconstructOptions = {}
 ): string {

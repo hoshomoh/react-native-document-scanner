@@ -10,7 +10,7 @@ A powerful, high-performance React Native library for scanning documents and ext
 - 🧠 **Adaptive Heuristics**: Intelligent line clustering and adaptive spacing for perfect horizontal alignment on receipts.
 - ⚙️ **Batch Processing**: Headless processing of existing images from file system, Content URIs, or Base64.
 - 🗂️ **Result Metadata**: Every `ScanResult` includes `metadata` (platform, OCR engine, filter, version) so you always know exactly how the result was produced.
-- 🧾 **Receipt Reconstruction**: Pure JS `reconstructReceipt` utility re-renders `blocks` as a column-aligned string — works across all platforms and versions.
+- 🧾 **Text Reconstruction**: Pure JS `reconstructText` utility re-renders `blocks` as a column-aligned string — works across all platforms and versions.
 - 🚀 **TurboModules**: Built from the ground up for the React Native New Architecture.
 - 📱 **Cross-Platform Parity**: Identical coordinate systems and configuration logic across iOS and Android.
 
@@ -85,13 +85,13 @@ const results = await processDocuments({
 
 ### `processDocuments(options: ProcessOptions): Promise<ScanResult[]>`
 
-### `reconstructReceipt(blocks: TextBlock[], options?: ReconstructOptions): string`
+### `reconstructText(blocks: TextBlock[], options?: ReconstructOptions): string`
 
-Reconstructs `blocks` as a column-aligned plain-text string. See [Receipt & Document Reconstruction](#receipt--document-reconstruction) for full details.
+Reconstructs `blocks` as a column-aligned plain-text string. See [Text Reconstruction](#receipt--document-reconstruction) for full details.
 
 ### `getReconstructMode(metadata: ScanMetadata): ReconstructMode`
 
-Returns `'paragraphs'` or `'clustered'` based on `result.metadata`, so you never have to hard-code the mode. See [Receipt & Document Reconstruction](#receipt--document-reconstruction).
+Returns `'paragraphs'` or `'clustered'` based on `result.metadata`, so you never have to hard-code the mode. See [Text Reconstruction](#receipt--document-reconstruction).
 
 ### Options
 
@@ -196,7 +196,7 @@ blocks.forEach((block, i) => {
 });
 ```
 
-> **iOS 26+ V2 note:** `RecognizeDocumentsRequest` returns one block per **paragraph**. For most single-column documents this equals one visual line, but multi-column rows (e.g. a receipt item name and its price) may appear as two separate blocks side by side. Use `reconstructReceipt` to merge and column-align them.
+> **iOS 26+ V2 note:** `RecognizeDocumentsRequest` returns one block per **paragraph**. For most single-column documents this equals one visual line, but multi-column rows (e.g. a receipt item name and its price) may appear as two separate blocks side by side. Use `reconstructText` to merge and column-align them.
 
 #### Confidence availability
 
@@ -259,15 +259,15 @@ On iOS 26 and later, `textVersion: 2` automatically uses `RecognizeDocumentsRequ
 
 ---
 
-## Receipt & Document Reconstruction
+## Text Reconstruction
 
-`reconstructReceipt` is a pure JavaScript utility that re-renders the `blocks` array as a column-aligned plain-text string. It is most useful when the native engine returns one block per paragraph rather than per fully-assembled line — specifically on **iOS 26+** where `RecognizeDocumentsRequest` separates multi-column lines (e.g. an item name block and a price block) into individual paragraph blocks.
+`reconstructText` is a pure JavaScript utility that re-renders the `blocks` array as a column-aligned plain-text string. It is most useful when the native engine returns one block per paragraph rather than per fully-assembled line — specifically on **iOS 26+** where `RecognizeDocumentsRequest` separates multi-column lines (e.g. an item name block and a price block) into individual paragraph blocks.
 
 ### Import
 
 ```typescript
 import {
-  reconstructReceipt,
+  reconstructText,
   getReconstructMode,
 } from '@hoshomoh/react-native-document-scanner';
 ```
@@ -282,7 +282,7 @@ const result = results[0];
 
 if (result.blocks && result.metadata) {
   const mode = getReconstructMode(result.metadata);
-  const receipt = reconstructReceipt(result.blocks, { mode });
+  const receipt = reconstructText(result.blocks, { mode });
   console.log(receipt);
 }
 ```
@@ -296,7 +296,7 @@ if (result.blocks && result.metadata) {
 | `filter`      | `FilterType`         | Image filter applied before OCR   |
 | `ocrEngine`   | see below            | Exact engine used                 |
 
-`ocrEngine` values and the correct `reconstructReceipt` mode for each:
+`ocrEngine` values and the correct `reconstructText` mode for each:
 
 | `ocrEngine`                   | When                  | `mode`         |
 | ----------------------------- | --------------------- | -------------- |
@@ -305,7 +305,7 @@ if (result.blocks && result.metadata) {
 | `"MLKit"`                     | Android V1 or V2      | `'clustered'`  |
 | `"none"`                      | `includeText: false`  | N/A            |
 
-### `reconstructReceipt` options
+### `reconstructText` options
 
 | Option              | Type                          | Default        | Description                                                                                                                                                                                   |
 | ------------------- | ----------------------------- | -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -314,9 +314,9 @@ if (result.blocks && result.metadata) {
 | `minConfidence`     | `number`                      | none           | Discard blocks below this confidence threshold before reconstruction. Useful when scan quality is poor. Has no effect on iOS 26+ (confidence is not provided by `RecognizeDocumentsRequest`). |
 | `rowGroupingFactor` | `number`                      | from `mode`    | Advanced: override the Y-proximity threshold directly (0.7 for `'paragraphs'`, 0.4 for `'clustered'`).                                                                                        |
 
-### When to use `result.text` vs `reconstructReceipt`
+### When to use `result.text` vs `reconstructText`
 
-| Source               | Use `result.text`                                   | Use `reconstructReceipt`                                            |
+| Source               | Use `result.text`                                   | Use `reconstructText`                                               |
 | -------------------- | --------------------------------------------------- | ------------------------------------------------------------------- |
 | iOS 26+ V2           | `text` has correct line order but no column spacing | ✅ Reconstructs column alignment from block X positions             |
 | iOS < 26 V2          | ✅ Column spacing already baked in by LineCluster   | Optional — use `mode: 'clustered'` if you prefer block-based output |
@@ -346,7 +346,7 @@ Use this whenever scans come from a phone camera rather than a dedicated flatbed
 Low-confidence blocks often represent scan artefacts, smudged text, or regions where the engine guessed. Filter them during reconstruction:
 
 ```typescript
-const receipt = reconstructReceipt(result.blocks ?? [], {
+const receipt = reconstructText(result.blocks ?? [], {
   mode: getReconstructMode(result.metadata!),
   minConfidence: 0.4, // drop blocks the engine was less than 40% sure about
 });
@@ -357,7 +357,7 @@ const receipt = reconstructReceipt(result.blocks ?? [], {
 | Scenario                             | Cause                                                                              | Mitigation                                                                                   |
 | ------------------------------------ | ---------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
 | Unusual fonts / handwriting          | OCR engine trained on standard print                                               | Use `ocrOptimized` filter; V2 is more accurate than V1 for structured documents              |
-| iOS 26+ item/price column mispairing | `RecognizeDocumentsRequest` paragraph Y centres may differ slightly across columns | Adjust `rowGroupingFactor` in `reconstructReceipt`                                           |
+| iOS 26+ item/price column mispairing | `RecognizeDocumentsRequest` paragraph Y centres may differ slightly across columns | Adjust `rowGroupingFactor` in `reconstructText`                                              |
 | Non-Latin characters misread         | Wrong language model active                                                        | iOS < 26: `automaticallyDetectsLanguage` is enabled on iOS 16+; Android: ML Kit auto-detects |
 | Very small text dropped              | Below `minimumTextHeight` (1% of image height) on iOS                              | Reduce `minimumTextHeight` in `OCRConfiguration.swift` if small legitimate text is lost      |
 

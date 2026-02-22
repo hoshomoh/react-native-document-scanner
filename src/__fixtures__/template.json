@@ -7,7 +7,7 @@
     "filter": "color",
     "ocrEngine": "VNRecognizeTextRequest"
   },
-  "text": "Raw text string returned by the OCR engine (result.text). Used for reference only — not consumed by reconstructReceipt.",
+  "text": "Raw text string returned by the OCR engine (result.text). Used for reference only — not consumed by reconstructText.",
   "blocks": [
     {
       "text": "STORE NAME",
