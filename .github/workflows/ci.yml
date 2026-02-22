@@ -66,20 +66,16 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write # Required for npm Trusted Publishing (OIDC)
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup (with npm registry)
+      - name: Setup
         uses: ./.github/actions/setup
-        with:
-          registry-url: https://registry.npmjs.org
-          scope: "@hoshomoh"
 
       - name: Build
         run: yarn build
 
       - name: Publish to npm
-        run: yarn npm publish --access public
-        env:
-          YARN_NPM_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --access public --provenance
