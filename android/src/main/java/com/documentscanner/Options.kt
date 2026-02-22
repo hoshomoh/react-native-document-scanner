@@ -3,6 +3,14 @@ package com.documentscanner
 import com.facebook.react.bridge.ReadableMap
 
 /**
+ * Reads an integer option from a ReadableMap.
+ * Uses getDouble instead of getInt because TypeScript `number` is always encoded as a
+ * JSI double — getInt can fail or return incorrect results on some RN versions.
+ */
+private fun intOption(options: ReadableMap?, key: String, fallback: Int): Int =
+    if (options?.hasKey(key) == true) options.getDouble(key).toInt() else fallback
+
+/**
  * Base options shared by both Scan and Process operations.
  * Allows parsing common properties from a React Native ReadableMap.
  */
@@ -54,7 +62,7 @@ abstract class BaseOptions(
 
         /** Validates and returns the OCR engine version [1, 2]. */
         private fun parseTextVersion(options: ReadableMap?): Int {
-            val value = if (options?.hasKey("textVersion") == true) options.getInt("textVersion") else 2
+            val value = intOption(options, "textVersion", 2)
             return if (value == 1) 1 else 2
         }
     }
@@ -70,10 +78,8 @@ class ScanOptions(options: ReadableMap?, fallbackPageCount: Int) : BaseOptions(o
     companion object {
         fun from(options: ReadableMap?): ScanOptions = ScanOptions(options, 0)
 
-        private fun parseMaxPages(options: ReadableMap?, fallback: Int): Int {
-            val value = if (options?.hasKey("maxPageCount") == true) options.getInt("maxPageCount") else fallback
-            return value.coerceIn(0, 100)
-        }
+        private fun parseMaxPages(options: ReadableMap?, fallback: Int): Int =
+            intOption(options, "maxPageCount", fallback).coerceIn(0, 100)
     }
 }
 

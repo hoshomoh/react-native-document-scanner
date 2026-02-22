@@ -1,6 +1,7 @@
 import DocumentScanner, {
   type ScanOptions,
   type ScanResult,
+  type ScanMetadata,
   type TextBlock,
   type ProcessOptions,
   type FilterType,
@@ -46,9 +47,13 @@ export function processDocuments(
   return DocumentScanner.processDocuments(options);
 }
 
+export { reconstructReceipt } from './receiptReconstructor';
+export type { ReconstructOptions } from './receiptReconstructor';
+
 export type {
   ScanOptions,
   ScanResult,
+  ScanMetadata,
   TextBlock,
   ProcessOptions,
   FilterType,

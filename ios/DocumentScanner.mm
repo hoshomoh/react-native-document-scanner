@@ -47,6 +47,9 @@
   if (options.includeText().has_value()) {
     dict[@"includeText"] = @(options.includeText().value());
   }
+  if (options.textVersion().has_value()) {
+    dict[@"textVersion"] = @(options.textVersion().value());
+  }
 
   if (_impl) {
     [(id<DocumentScannerSwiftProtocol>)_impl scanDocuments:dict
@@ -83,6 +86,9 @@
   }
   if (options.includeText().has_value()) {
     dict[@"includeText"] = @(options.includeText().value());
+  }
+  if (options.textVersion().has_value()) {
+    dict[@"textVersion"] = @(options.textVersion().value());
   }
 
   if (_impl) {

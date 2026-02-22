@@ -11,8 +11,10 @@ import com.google.mlkit.vision.text.Text
 class TextRecognizerV1 {
     companion object {
         /**
-         * Performs raw text recognition using ML Kit's default block grouping.
-         * 
+         * Performs raw text recognition using ML Kit's default output.
+         * Returns one block per visual line (ML Kit TextLine level) for
+         * consistent cross-platform granularity with iOS V1.
+         *
          * @param visionText The raw result from ML Kit.
          * @param imagePixelWidth Original image width in pixels.
          * @param imagePixelHeight Original image height in pixels.
@@ -20,37 +22,38 @@ class TextRecognizerV1 {
          */
         fun process(visionText: Text, imagePixelWidth: Double, imagePixelHeight: Double): WritableMap {
             val resultMap = Arguments.createMap()
-            
-            // Raw text from ML Kit (usually groups blocks heuristically by itself)
+
+            // Raw text from ML Kit
             resultMap.putString("text", visionText.text)
-            
-            // Standard Blocks Array
+
+            // Line-level blocks — one block per ML Kit TextLine
             val blocksArray = Arguments.createArray()
-            visionText.textBlocks.forEach { block ->
-                val blockMap = Arguments.createMap()
-                blockMap.putString("text", block.text)
-                
-                val frameMap = Arguments.createMap()
-                val box = block.boundingBox ?: Rect(0,0,0,0)
-                
-                frameMap.putDouble("x", safeNormalize(box.left.toDouble(), imagePixelWidth))
-                frameMap.putDouble("y", safeNormalize(box.top.toDouble(), imagePixelHeight))
-                frameMap.putDouble("width", safeNormalize(box.width().toDouble(), imagePixelWidth))
-                frameMap.putDouble("height", safeNormalize(box.height().toDouble(), imagePixelHeight))
-                
-                blockMap.putMap("frame", frameMap)
-                
-                // Calculate average confidence from all elements in the block
-                val allElements = block.lines.flatMap { it.elements }
-                if (allElements.isNotEmpty()) {
-                    val avgConfidence = allElements.map { it.confidence.toDouble() }.average()
-                    blockMap.putDouble("confidence", avgConfidence)
+            for (block in visionText.textBlocks) {
+                for (line in block.lines) {
+                    val blockMap = Arguments.createMap()
+                    blockMap.putString("text", line.text)
+
+                    val frameMap = Arguments.createMap()
+                    val box = line.boundingBox ?: Rect(0, 0, 0, 0)
+
+                    frameMap.putDouble("x", safeNormalize(box.left.toDouble(), imagePixelWidth))
+                    frameMap.putDouble("y", safeNormalize(box.top.toDouble(), imagePixelHeight))
+                    frameMap.putDouble("width", safeNormalize(box.width().toDouble(), imagePixelWidth))
+                    frameMap.putDouble("height", safeNormalize(box.height().toDouble(), imagePixelHeight))
+
+                    blockMap.putMap("frame", frameMap)
+
+                    // Average confidence from all elements in the line
+                    if (line.elements.isNotEmpty()) {
+                        val avgConfidence = line.elements.map { it.confidence.toDouble() }.average()
+                        blockMap.putDouble("confidence", avgConfidence)
+                    }
+
+                    blocksArray.pushMap(blockMap)
                 }
-                
-                blocksArray.pushMap(blockMap)
             }
             resultMap.putArray("blocks", blocksArray)
-            
+
             return resultMap
         }
 

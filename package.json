@@ -33,6 +33,7 @@
     "typecheck": "tsc",
     "prepack": "bob build",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
+    "lint:fix": "eslint \"**/*.{js,ts,tsx}\" --fix",
     "lint:staged": "eslint --max-warnings=0",
     "prettier": "prettier \"**/*.{js,ts,tsx,md}\" --check",
     "prettier:fix": "prettier \"**/*.{js,ts,tsx,md}\" --write",

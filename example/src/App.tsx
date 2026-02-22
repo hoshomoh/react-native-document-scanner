@@ -18,6 +18,7 @@ import {
   Filter,
   Format,
   type ScanResult,
+  type ScanMetadata,
   type ScanOptions,
   type ProcessOptions,
   type FilterType,
@@ -60,13 +61,48 @@ function SwitchGroup<T extends string>({
           <Text style={styles.radioLabel}>{labels?.[option] ?? option}</Text>
           <Switch
             value={selected === option}
-            onValueChange={() => onSelect(option)}
+            onValueChange={(v) => {
+              if (v) {
+                onSelect(option);
+              }
+            }}
           />
         </View>
       ))}
     </View>
   );
 }
+
+const ENGINE_LABELS: Record<string, string> = {
+  RecognizeDocumentsRequest: 'RecognizeDocuments (iOS 26+)',
+  VNRecognizeTextRequest: 'VNRecognizeText',
+  MLKit: 'ML Kit',
+  none: 'None',
+};
+
+const MetadataCard = ({ metadata }: { metadata: ScanMetadata }) => (
+  <View style={styles.metadataCard}>
+    <Text style={styles.metadataCardTitle}>Scan Metadata</Text>
+    <View style={styles.metadataRow}>
+      <Text style={styles.metadataKey}>Platform</Text>
+      <Text style={styles.metadataValue}>{metadata.platform}</Text>
+    </View>
+    <View style={styles.metadataRow}>
+      <Text style={styles.metadataKey}>OCR Engine</Text>
+      <Text style={styles.metadataValue}>
+        {ENGINE_LABELS[metadata.ocrEngine] ?? metadata.ocrEngine}
+      </Text>
+    </View>
+    <View style={styles.metadataRow}>
+      <Text style={styles.metadataKey}>Text Version</Text>
+      <Text style={styles.metadataValue}>V{metadata.textVersion}</Text>
+    </View>
+    <View style={[styles.metadataRow, styles.metadataRowLast]}>
+      <Text style={styles.metadataKey}>Filter</Text>
+      <Text style={styles.metadataValue}>{metadata.filter}</Text>
+    </View>
+  </View>
+);
 
 export default function App() {
   const [results, setResults] = React.useState<ScanResult[]>([]);
@@ -108,7 +144,9 @@ export default function App() {
         includeBase64: false,
       });
 
-      if (result.didCancel || !result.assets) return;
+      if (result.didCancel || !result.assets) {
+        return;
+      }
 
       const uris = result.assets
         .map((asset) => asset.uri)
@@ -284,6 +322,7 @@ export default function App() {
                 resizeMode="contain"
               />
             )}
+            {result.metadata && <MetadataCard metadata={result.metadata} />}
             {result.text && (
               <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>Extracted Text:</Text>
@@ -297,7 +336,7 @@ export default function App() {
             {result.blocks && (
               <View style={styles.sectionContainer}>
                 <Text style={styles.sectionTitle}>
-                  Metadata Blocks ({result.blocks.length}):
+                  OCR Blocks ({result.blocks.length}):
                 </Text>
                 <View style={styles.codeWrapper}>
                   <Text selectable style={styles.codeContent}>
@@ -510,5 +549,48 @@ const styles = StyleSheet.create({
     fontSize: 11,
     color: '#4ade80',
     fontFamily: 'Courier',
+  },
+  metadataCard: {
+    marginTop: 14,
+    backgroundColor: '#f0f7ff',
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: '#c9e0ff',
+    overflow: 'hidden',
+  },
+  metadataCardTitle: {
+    fontSize: 13,
+    fontWeight: '700',
+    color: '#0055cc',
+    paddingHorizontal: 12,
+    paddingTop: 10,
+    paddingBottom: 6,
+    borderBottomWidth: 1,
+    borderBottomColor: '#c9e0ff',
+  },
+  metadataRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 12,
+    paddingVertical: 7,
+    borderBottomWidth: 0.5,
+    borderBottomColor: '#d8eaff',
+  },
+  metadataRowLast: {
+    borderBottomWidth: 0,
+  },
+  metadataKey: {
+    fontSize: 12,
+    color: '#555',
+    fontWeight: '500',
+  },
+  metadataValue: {
+    fontSize: 12,
+    color: '#1a1a1a',
+    fontWeight: '600',
+    textAlign: 'right',
+    flexShrink: 1,
+    marginLeft: 8,
   },
 });

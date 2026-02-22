@@ -13,12 +13,13 @@ public class ResponseUtil {
        - base64: Optional Base64 string.
      - Returns: A `ScanResult` struct.
      */
-    public static func buildResult(uri: String?, base64: String?, text: String?, blocks: [TextBlock]?) -> ScanResult {
+    public static func buildResult(uri: String?, base64: String?, text: String?, blocks: [TextBlock]?, metadata: ScanMetadata) -> ScanResult {
         return ScanResult(
             uri: uri,
             base64: base64,
             text: text,
-            blocks: blocks
+            blocks: blocks,
+            metadata: metadata
         )
     }
 }

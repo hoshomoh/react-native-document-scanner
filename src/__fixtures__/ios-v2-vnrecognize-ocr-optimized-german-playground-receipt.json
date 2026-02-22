@@ -1,0 +1,182 @@
+{
+  "description": "iOS · VNRecognizeTextRequest V2 · ocrOptimized · German playground receipt (LEMITEX GMBH · line-clustered blocks)",
+  "metadata": {
+    "platform": "ios",
+    "textVersion": 2,
+    "filter": "ocrOptimized",
+    "ocrEngine": "VNRecognizeTextRequest"
+  },
+  "text": "LEMITEX GMBH\nBEILSTEINER STR.109\n12681 BERLIN\n1. Kopie\n4 x10, 50\nERWACHSEN SA. SO.          42,00\n2 x 14,50\nKIND SA. SO          29, 00\nニニニニニニご\nTotal          ニニニニ=\nNettoumsatz          71,00\nUmsatz 19% inkl.          59, 66\nMwSt 19%          71,00\nKarte          11, 34\n71,00\nSeq. No.: 145642 | S/N: 2842583\nStart/End: 28.12.2025 15:57 | 28.12.2025\n15:57\nTransaction: 10390 | Signature counter:\n29682\nZertifikat Seriennr. :\n4C38A5B4BB15E3448966BB948AAC45FBCE9EDA6CD2\nFE3E5EA931FF5A1F08FB65\nF7NW8-StpdU-iZPCC-d0ep0-JMDtE-gRkGw-KQSND-\n8ucDC-xClhv-R+Csh-/S1xE-a5BIk-2Hi7T-/OXHG-\ngJCpC-qH5IQ-fk3s3-w+7nC-86+Uu-MHKKn-OM3dX-\nTbgro-19RE6-IC5Ke-yujnD-zSR\n15:57 28. 12. 2025 3 Bed 3          44170\n* Vielen Dank *\nMIT EINTRITT IN DAS BIM & BOOM\nKINDERSPIELLAND AKZEPTIERT\nJEDER BESUCHER UNSERE HAUSORDNUNG\nSOWIE HYGIENEREGELN.",
+  "blocks": [
+    {
+      "text": "LEMITEX GMBH",
+      "frame": { "x": 0.4349546064427179, "y": 0.13268630865666076, "width": 0.22543773457343064, "height": 0.027389071328299375 },
+      "confidence": 1
+    },
+    {
+      "text": "BEILSTEINER STR.109",
+      "frame": { "x": 0.35940431660571803, "y": 0.14988597819646, "width": 0.3655956808799934, "height": 0.03371388299124578 },
+      "confidence": 1
+    },
+    {
+      "text": "12681 BERLIN",
+      "frame": { "x": 0.4309888749807858, "y": 0.17558636659802151, "width": 0.22527992015999182, "height": 0.027743622916085342 },
+      "confidence": 1
+    },
+    {
+      "text": "1. Kopie",
+      "frame": { "x": 0.46249999844202144, "y": 0.223214285977691, "width": 0.15416666592845724, "height": 0.020714285714285685 },
+      "confidence": 1
+    },
+    {
+      "text": "4 x10, 50",
+      "frame": { "x": 0.15416666576388893, "y": 0.27459016380572354, "width": 0.16666666564648275, "height": 0.02469555060673878 },
+      "confidence": 0.4000000059604645
+    },
+    {
+      "text": "ERWACHSEN SA. SO.          42,00",
+      "frame": { "x": 0.14736065005287735, "y": 0.2960829457019438, "width": 0.7735928553537103, "height": 0.03806842466983418 },
+      "confidence": 0.75
+    },
+    {
+      "text": "2 x 14,50",
+      "frame": { "x": 0.1458333377354616, "y": 0.3196428567119447, "width": 0.17499999557074336, "height": 0.024642857142857078 },
+      "confidence": 0.30000001192092896
+    },
+    {
+      "text": "KIND SA. SO          29, 00",
+      "frame": { "x": 0.14583333371425716, "y": 0.3422131148303137, "width": 0.7708333341430571, "height": 0.03688524598383103 },
+      "confidence": 0.600000003973643
+    },
+    {
+      "text": "ニニニニニニご",
+      "frame": { "x": 0.14583333827817735, "y": 0.36678571439738583, "width": 0.1416666614992006, "height": 0.012312645912170295 },
+      "confidence": 0.30000001192092896
+    },
+    {
+      "text": "Total          ニニニニ=",
+      "frame": { "x": 0.141666665203812, "y": 0.3831967215436597, "width": 0.770833336623626, "height": 0.022540982995386982 },
+      "confidence": 0.6500000059604645
+    },
+    {
+      "text": "Nettoumsatz          71,00",
+      "frame": { "x": 0.13749999779704808, "y": 0.399518685206121, "width": 0.7750664467781696, "height": 0.030809183535424167 },
+      "confidence": 0.75
+    },
+    {
+      "text": "Umsatz 19% inkl.          59, 66",
+      "frame": { "x": 0.13075837291888348, "y": 0.4200000000532521, "width": 0.6692416270425974, "height": 0.039850821574876405 },
+      "confidence": 1
+    },
+    {
+      "text": "MwSt 19%          71,00",
+      "frame": { "x": 0.13306243006151489, "y": 0.44262295060491275, "width": 0.666937569899966, "height": 0.03325613015839779 },
+      "confidence": 0.4000000059604645
+    },
+    {
+      "text": "Karte          11, 34",
+      "frame": { "x": 0.1331845232586635, "y": 0.46500000032126354, "width": 0.6626488093500247, "height": 0.03325408360274473 },
+      "confidence": 0.75
+    },
+    {
+      "text": "71,00",
+      "frame": { "x": 0.7205230424925405, "y": 0.487133010020226, "width": 0.18395391500221114, "height": 0.025733980451311367 },
+      "confidence": 0.30000001192092896
+    },
+    {
+      "text": "Seq. No.: 145642 | S/N: 2842583",
+      "frame": { "x": 0.12333883020840401, "y": 0.5182161619638372, "width": 0.5617062329207865, "height": 0.034748393467494476 },
+      "confidence": 0.30000001192092896
+    },
+    {
+      "text": "Start/End: 28.12.2025 15:57 | 28.12.2025",
+      "frame": { "x": 0.12346103055422242, "y": 0.5426092850603418, "width": 0.7445071016928972, "height": 0.03497242791312083 },
+      "confidence": 0.5
+    },
+    {
+      "text": "15:57",
+      "frame": { "x": 0.12083333151173346, "y": 0.5655737707024638, "width": 0.1000000022146283, "height": 0.020491803033011347 },
+      "confidence": 1
+    },
+    {
+      "text": "Transaction: 10390 | Signature counter:",
+      "frame": { "x": 0.11916318928587707, "y": 0.5868204398026877, "width": 0.7239587614948068, "height": 0.03591485977172859 },
+      "confidence": 1
+    },
+    {
+      "text": "29682",
+      "frame": { "x": 0.11641250812562096, "y": 0.6103520011643792, "width": 0.10050831477770092, "height": 0.021099275861467648 },
+      "confidence": 1
+    },
+    {
+      "text": "Zertifikat Seriennr. :",
+      "frame": { "x": 0.11123732695966754, "y": 0.6334262134365232, "width": 0.398136354842276, "height": 0.027575536455426986 },
+      "confidence": 1
+    },
+    {
+      "text": "4C38A5B4BB15E3448966BB948AAC45FBCE9EDA6CD2",
+      "frame": { "x": 0.10706943515905806, "y": 0.6545923701709935, "width": 0.794091035042861, "height": 0.036433228084019165 },
+      "confidence": 1
+    },
+    {
+      "text": "FE3E5EA931FF5A1F08FB65",
+      "frame": { "x": 0.10730943631107875, "y": 0.6785425571429243, "width": 0.4185775513226823, "height": 0.02668785367693227 },
+      "confidence": 1
+    },
+    {
+      "text": "F7NW8-StpdU-iZPCC-d0ep0-JMDtE-gRkGw-KQSND-",
+      "frame": { "x": 0.10302396849857438, "y": 0.7006966170648589, "width": 0.7939930598863842, "height": 0.03443150929042271 },
+      "confidence": 1
+    },
+    {
+      "text": "8ucDC-xClhv-R+Csh-/S1xE-a5BIk-2Hi7T-/OXHG-",
+      "frame": { "x": 0.09886760297439802, "y": 0.7234644415243117, "width": 0.7983014863876542, "height": 0.03576723098754886 },
+      "confidence": 1
+    },
+    {
+      "text": "gJCpC-qH5IQ-fk3s3-w+7nC-86+Uu-MHKKn-OM3dX-",
+      "frame": { "x": 0.09500554081644359, "y": 0.7470326444793799, "width": 0.8020789336050889, "height": 0.03649052483694892 },
+      "confidence": 1
+    },
+    {
+      "text": "Tbgro-19RE6-IC5Ke-yujnD-zSR",
+      "frame": { "x": 0.09583334539497151, "y": 0.7745901639373921, "width": 0.5124999822829734, "height": 0.022540983472551623 },
+      "confidence": 1
+    },
+    {
+      "text": "15:57 28. 12. 2025 3 Bed 3          44170",
+      "frame": { "x": 0.0916666688404278, "y": 0.8196428578181889, "width": 0.7958333315526005, "height": 0.032816158540237006 },
+      "confidence": 0.75
+    },
+    {
+      "text": "* Vielen Dank *",
+      "frame": { "x": 0.3291666661299212, "y": 0.8688524588016341, "width": 0.2958333274276579, "height": 0.0225761127471924 },
+      "confidence": 1
+    },
+    {
+      "text": "MIT EINTRITT IN DAS BIM & BOOM",
+      "frame": { "x": 0.17499999125549562, "y": 0.8934426229266429, "width": 0.5791666725723422, "height": 0.026639344351632288 },
+      "confidence": 0.5
+    },
+    {
+      "text": "KINDERSPIELLAND AKZEPTIERT",
+      "frame": { "x": 0.23201282705786902, "y": 0.9137765140089433, "width": 0.4986073531329372, "height": 0.03125532422746935 },
+      "confidence": 1
+    },
+    {
+      "text": "JEDER BESUCHER UNSERE HAUSORDNUNG",
+      "frame": { "x": 0.16995544128343676, "y": 0.9336541946492963, "width": 0.6400918060878538, "height": 0.03642976760864258 },
+      "confidence": 1
+    },
+    {
+      "text": "SOWIE HYGIENEREGELN.",
+      "frame": { "x": 0.28199186690132916, "y": 0.9621571036184086, "width": 0.38618294282644683, "height": 0.030030054364885594 },
+      "confidence": 1
+    }
+  ],
+  "options": {
+    "lineWidth": 56,
+    "minConfidence": null
+  },
+  "expected": null
+}

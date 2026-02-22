@@ -249,7 +249,31 @@ public class ImageUtil {
         if format == "png" {
             return image.pngData()
         } else {
-            return image.jpegData(compressionQuality: quality)
+            /* Strip alpha before JPEG encoding to avoid AlphaPremulLast warnings.
+               JPEG has no alpha channel, so composite onto white first. */
+            return renderOpaque(image).jpegData(compressionQuality: quality)
+        }
+    }
+
+    /**
+     Renders a UIImage into an opaque RGB context, compositing onto white.
+     Used to strip the alpha channel before JPEG encoding.
+     - Parameter image: The source image (may have alpha).
+     - Returns: An opaque UIImage with no alpha channel.
+     */
+    private static func renderOpaque(_ image: UIImage) -> UIImage {
+        /* If already opaque, skip the redraw entirely. */
+        if let cgImage = image.cgImage {
+            let alpha = cgImage.alphaInfo
+            if alpha == .none || alpha == .noneSkipFirst || alpha == .noneSkipLast {
+                return image
+            }
+        }
+        let rendererFormat = UIGraphicsImageRendererFormat()
+        rendererFormat.scale = image.scale
+        rendererFormat.opaque = true
+        return UIGraphicsImageRenderer(size: image.size, format: rendererFormat).image { _ in
+            image.draw(in: CGRect(origin: .zero, size: image.size))
         }
     }
 }

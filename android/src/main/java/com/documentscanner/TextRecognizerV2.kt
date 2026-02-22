@@ -33,7 +33,7 @@ class TextRecognizerV2 {
          * @param visionText The raw result from ML Kit.
          * @param imagePixelWidth Original image width in pixels.
          * @param imagePixelHeight Original image height in pixels.
-         * @return WritableMap with "text" (structured) and "blocks" (metadata).
+         * @return WritableMap with "text" (structured) and "blocks" (line-level metadata).
          */
         fun process(visionText: Text, imagePixelWidth: Double, imagePixelHeight: Double): WritableMap {
             val resultMap = Arguments.createMap()
@@ -52,7 +52,7 @@ class TextRecognizerV2 {
                             top = safeNormalize(box.top.toDouble(), imagePixelHeight),
                             width = safeNormalize(box.width().toDouble(), imagePixelWidth),
                             height = safeNormalize(box.height().toDouble(), imagePixelHeight),
-                            confidence = element.confidence.toDouble() // Element level confidence
+                            confidence = element.confidence.toDouble()
                         ))
                     }
                 }
@@ -62,6 +62,7 @@ class TextRecognizerV2 {
             class LineCluster(firstElement: TextElement) {
                 val elements = mutableListOf(firstElement)
                 val heights = mutableListOf(firstElement.height)
+                val centerYs = mutableListOf(firstElement.top + firstElement.height / 2.0)
 
                 // Union Bounding Box state
                 var uLeft = firstElement.left
@@ -80,12 +81,24 @@ class TextRecognizerV2 {
                     }
                 }
 
+                fun medianCenterY(): Double {
+                    if (centerYs.isEmpty()) return 0.0
+                    val sorted = centerYs.sorted()
+                    val mid = sorted.size / 2
+                    return if (sorted.size % 2 == 0) {
+                        (sorted[mid - 1] + sorted[mid]) / 2.0
+                    } else {
+                        sorted[mid]
+                    }
+                }
+
                 val height: Double get() = uBottom - uTop
-                val midY: Double get() = uTop + (height / 2.0)
+                val midY: Double get() = uTop + (height / 2.0) // retained for final cluster sort
 
                 fun add(element: TextElement) {
                     elements.add(element)
                     heights.add(element.height)
+                    centerYs.add(element.top + element.height / 2.0)
 
                     // Update union box
                     uLeft = min(uLeft, element.left)
@@ -95,8 +108,8 @@ class TextRecognizerV2 {
                 }
             }
 
-            // Sort by Top (Y) ascending
-            val sortedElements = allElements.sortedBy { it.top + (it.height / 2.0) } // Sort by midY
+            // Sort by midY ascending (top of page first)
+            val sortedElements = allElements.sortedBy { it.top + (it.height / 2.0) }
             val clusters = mutableListOf<LineCluster>()
 
             for (element in sortedElements) {
@@ -109,43 +122,39 @@ class TextRecognizerV2 {
 
                 for ((index, cluster) in clusters.withIndex()) {
 
-                    // 1. Height Similarity Check
-                    val minH = min(cluster.height, elHeight)
-                    val maxH = max(cluster.height, elHeight)
+                    // 1. Height Similarity Check — use median height, not union bbox height
+                    val clusterMedianH = cluster.medianHeight()
+                    val minH = min(clusterMedianH, elHeight)
+                    val maxH = max(clusterMedianH, elHeight)
                     if ((minH / maxH) < OCRConfiguration.HEIGHT_COMPATIBILITY_THRESHOLD) continue
 
-                    // 2. Overlap & Centerline
-                    // Intersection
+                    // 2. Overlap & Centerline — use median centerY, not union bbox midY
                     val intTop = max(cluster.uTop, element.top)
                     val intBottom = min(cluster.uBottom, element.top + element.height)
                     val intHeight = max(0.0, intBottom - intTop)
 
                     val overlapRatio = intHeight / minH
 
-                    val centerDist = abs(cluster.midY - elMidY)
-                    val typicalHeight = max(cluster.medianHeight(), elHeight)
+                    val centerDist = abs(cluster.medianCenterY() - elMidY)
+                    val typicalHeight = max(clusterMedianH, elHeight)
 
                     val isOverlapGood = overlapRatio >= OCRConfiguration.OVERLAP_RATIO_THRESHOLD
                     val isCenterClose = centerDist <= (OCRConfiguration.CENTERLINE_DISTANCE_FACTOR * typicalHeight)
 
                     if (isOverlapGood || isCenterClose) {
                         // 3. Adaptive Cluster Growth Constraint
-                        // Check Horizontal Overlap
                         val clusterRight = cluster.uRight
                         val elementRight = element.left + element.width
                         val intersectX = max(0.0, min(clusterRight, elementRight) - max(cluster.uLeft, element.left))
                         val isStacked = intersectX > 0
 
-                        // Adaptive Limit: stacked vs skewed
                         val growthLimit = if (isStacked) OCRConfiguration.STACKED_GROWTH_LIMIT else OCRConfiguration.SKEWED_GROWTH_LIMIT
 
-                        // Calculate hypothetical new union height
                         val newTop = min(cluster.uTop, element.top)
                         val newBottom = max(cluster.uBottom, element.top + element.height)
                         val newHeight = newBottom - newTop
 
                         if (newHeight <= (growthLimit * typicalHeight)) {
-                            // Score match
                             if (overlapRatio > bestOverlapRatio) {
                                 bestOverlapRatio = overlapRatio
                                 bestCenterDist = centerDist
@@ -168,11 +177,12 @@ class TextRecognizerV2 {
             // Sort clusters top-to-bottom
             clusters.sortBy { it.midY }
 
-            // Step 3: Reconstruct text with adaptive column spacing
+            // Step 3: Reconstruct text with adaptive column spacing + build cluster-based blocks
             val structuredText = StringBuilder()
+            val blocksArray = Arguments.createArray()
 
             for (cluster in clusters) {
-                // Sort elements Left-to-Right for reading order
+                // Sort elements left-to-right for reading order
                 val lineElements = cluster.elements.sortedBy { it.left }
                 val medianH = cluster.medianHeight()
 
@@ -185,13 +195,11 @@ class TextRecognizerV2 {
                     if (index > 0) {
                         val gap = xStart - lastXEnd
 
-                        // Apply spacing heuristics defined in OCRConfiguration
                         if (gap > (medianH * OCRConfiguration.ADAPTIVE_SPACING_FACTOR)) {
                             val spaceWidth = medianH * OCRConfiguration.SPACE_WIDTH_FACTOR
                             val spaces = max(1, (gap / spaceWidth).toInt())
-                            val cappedSpaces = min(spaces, OCRConfiguration.MAX_SPACES)
-                            lineString.append(" ".repeat(cappedSpaces))
-                        } else if (gap > 0) {
+                            lineString.append(" ".repeat(min(spaces, OCRConfiguration.MAX_SPACES)))
+                        } else {
                             lineString.append(" ")
                         }
                     }
@@ -199,36 +207,27 @@ class TextRecognizerV2 {
                     lineString.append(element.text)
                     lastXEnd = xStart + element.width
                 }
+
                 structuredText.append(lineString).append("\n")
-            }
 
-            resultMap.putString("text", structuredText.toString())
-
-            // Step 4: Build blocks array for metadata (unchanged logic)
-            val blocksArray = Arguments.createArray()
-            visionText.textBlocks.forEach { block ->
+                // Build one block per cluster (line-level, aligned with text output)
                 val blockMap = Arguments.createMap()
-                blockMap.putString("text", block.text)
+                blockMap.putString("text", lineString.toString())
 
                 val frameMap = Arguments.createMap()
-                val box = block.boundingBox ?: Rect(0,0,0,0)
-
-                frameMap.putDouble("x", safeNormalize(box.left.toDouble(), imagePixelWidth))
-                frameMap.putDouble("y", safeNormalize(box.top.toDouble(), imagePixelHeight))
-                frameMap.putDouble("width", safeNormalize(box.width().toDouble(), imagePixelWidth))
-                frameMap.putDouble("height", safeNormalize(box.height().toDouble(), imagePixelHeight))
-
+                frameMap.putDouble("x", cluster.uLeft)
+                frameMap.putDouble("y", cluster.uTop)
+                frameMap.putDouble("width", cluster.uRight - cluster.uLeft)
+                frameMap.putDouble("height", cluster.uBottom - cluster.uTop)
                 blockMap.putMap("frame", frameMap)
 
-                // Calculate average confidence from all elements in the block
-                val allElements = block.lines.flatMap { it.elements }
-                if (allElements.isNotEmpty()) {
-                    val avgConfidence = allElements.map { it.confidence.toDouble() }.average()
-                    blockMap.putDouble("confidence", avgConfidence)
-                }
+                val avgConfidence = cluster.elements.map { it.confidence }.average()
+                blockMap.putDouble("confidence", avgConfidence)
 
                 blocksArray.pushMap(blockMap)
             }
+
+            resultMap.putString("text", structuredText.toString())
             resultMap.putArray("blocks", blocksArray)
 
             return resultMap

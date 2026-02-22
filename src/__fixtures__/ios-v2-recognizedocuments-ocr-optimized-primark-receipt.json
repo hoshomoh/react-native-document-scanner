@@ -1,0 +1,575 @@
+{
+  "description": "iOS · RecognizeDocumentsRequest V2 · ocrOptimized · Primark receipt (Leipzig · paragraph-level blocks)",
+  "metadata": {
+    "platform": "ios",
+    "textVersion": 2,
+    "filter": "ocrOptimized",
+    "ocrEngine": "RecognizeDocumentsRequest"
+  },
+  "text": "Primark\nPrimark Mode Ltd & CO KG\nHainstrasse 21\n- 23\n04109 Leipzig\nUSt-Td. Nr.: DE276960607 VERKAUFT\n211749518 Schreibwaren\n211171123 Sport-Sweatshirt\n1,00\n7,00\nB\nSumme\nDebit MasterCard\nKarten-Nr\n*******x****0845\nHandler-Nr.\n******0198\nAuth. -Nr\nNLBFQP\nApp. Nr\nA0000000041010\nKassenterminal-ID ****1006\nPAN-Laufnr.\nQuelle\nVerifizierung\nkontaktlos\nnicht ausgeführt\n8,00\n8,00\n(MwSt.-Obersicht)\nCode MwSt. -Satz Artikelberras\nMwSt. -Betr.\n19,00%\nSUMMEN\n6,72\n6,72\n1,28\n1,28\nFiliale: 0820\nDatum: 10.12.2025\nKasse: 014\nTrans. : 325879\nZeit: 18:05\nBen.: 10348987\nVerkaufte\nArtikel: 2\nZurückgegebene Artikel: 0\nPrimark Mode Ltd & Co.KG\nKennedyplatz 2\n45127 Essen\nPRIMARK\nWie waren Deine heutigen Eindrücke in unserem Store? Nimm an unserer Online-Umfrage teil und Du erhaltst die Chance auf eine Geschenkkarte in Höhe von 100 € (monatliche Verlosung).\nWir freuen uns auf Dein Feedback unter\nwww.tellprimark.de.\n*Teilnahme ab 18. Teilnahmebedingungen und Datenschutzbestimmungen findest Du auf www.tellprimark.de.\nRückgabe\nDie Erstattung/der Umtausch der gekauften Artikel ist bis zum 30.01.2026 möglich.\nEine Erstattung oder ein Umtausch ist nur in dem Land möglich, in dem Sie die\nArtikel gekauft haben.\nDie Details finden\nSie auf der Rückseite\nVIELEN DANK\n08200143258790001121025003\n",
+  "blocks": [
+    {
+      "frame": {
+        "height": 0.020336853060769378,
+        "width": 0.2921322186787923,
+        "y": 0.034425196881194386,
+        "x": 0.33476775769833583
+      },
+      "text": "Primark"
+    },
+    {
+      "text": "Primark Mode Ltd & CO KG",
+      "frame": {
+        "x": 0.24186524427917455,
+        "height": 0.01641446371590327,
+        "y": 0.06201616749455341,
+        "width": 0.5000279426574707
+      }
+    },
+    {
+      "text": "Hainstrasse 21",
+      "frame": {
+        "width": 0.29281768798828134,
+        "y": 0.0755750273704121,
+        "x": 0.2817679552461908,
+        "height": 0.01163427461538491
+      }
+    },
+    {
+      "text": "- 23",
+      "frame": {
+        "x": 0.5801104961728639,
+        "y": 0.07393209176126136,
+        "height": 0.010405257393209189,
+        "width": 0.09944751262664797
+      }
+    },
+    {
+      "frame": {
+        "y": 0.08707557502758345,
+        "x": 0.34254144668831993,
+        "height": 0.010405257393209189,
+        "width": 0.27624308268229164
+      },
+      "text": "04109 Leipzig"
+    },
+    {
+      "frame": {
+        "y": 0.09367192627856702,
+        "x": 0.23610681049690582,
+        "height": 0.03836342016681793,
+        "width": 0.48644545873006184
+      },
+      "text": "USt-Td. Nr.: DE276960607 VERKAUFT"
+    },
+    {
+      "text": "211749518 Schreibwaren",
+      "frame": {
+        "x": 0.03314917632120329,
+        "width": 0.4640883763631185,
+        "y": 0.14074479717737087,
+        "height": 0.012048192771084265
+      }
+    },
+    {
+      "text": "211171123 Sport-Sweatshirt",
+      "frame": {
+        "height": 0.011677258377660094,
+        "x": 0.038674017969772954,
+        "y": 0.1526162793489898,
+        "width": 0.5359116236368815
+      }
+    },
+    {
+      "text": "1,00",
+      "frame": {
+        "width": 0.08839778900146489,
+        "height": 0.011627906515198738,
+        "y": 0.13808139538581155,
+        "x": 0.7790055261254186
+      }
+    },
+    {
+      "text": "7,00",
+      "frame": {
+        "x": 0.7790055266977257,
+        "y": 0.1482558141298559,
+        "height": 0.010174418070230118,
+        "width": 0.09944751262664797
+      }
+    },
+    {
+      "text": "B",
+      "frame": {
+        "width": 0.03314917087554925,
+        "y": 0.14825581404444876,
+        "height": 0.00872093014753661,
+        "x": 0.8729281764406784
+      }
+    },
+    {
+      "text": "Summe",
+      "frame": {
+        "width": 0.11049723625183105,
+        "y": 0.18604651156140606,
+        "height": 0.00872093014753672,
+        "x": 0.03314917068623921
+      }
+    },
+    {
+      "frame": {
+        "width": 0.3395059585571289,
+        "y": 0.195963560849034,
+        "x": 0.031844666058438074,
+        "height": 0.014477485372620724
+      },
+      "text": "Debit MasterCard"
+    },
+    {
+      "text": "Karten-Nr",
+      "frame": {
+        "height": 0.01077963044583341,
+        "x": 0.05502441214927881,
+        "width": 0.19381858507792155,
+        "y": 0.20754623146779472
+      }
+    },
+    {
+      "frame": {
+        "y": 0.20604665037628278,
+        "x": 0.42444135939806127,
+        "width": 0.34446121851603184,
+        "height": 0.012125061218997035
+      },
+      "text": "*******x****0845"
+    },
+    {
+      "frame": {
+        "x": 0.05524862800866774,
+        "y": 0.2194767444774819,
+        "width": 0.23204418818155925,
+        "height": 0.010174418070230118
+      },
+      "text": "Handler-Nr."
+    },
+    {
+      "frame": {
+        "width": 0.2154696146647136,
+        "x": 0.4254143612449913,
+        "y": 0.21947674430123165,
+        "height": 0.00872093014753661
+      },
+      "text": "******0198"
+    },
+    {
+      "frame": {
+        "x": 0.0551611729310516,
+        "height": 0.010379469538309483,
+        "width": 0.17144560813903809,
+        "y": 0.22954863719776508
+      },
+      "text": "Auth. -Nr"
+    },
+    {
+      "frame": {
+        "y": 0.22949677655711476,
+        "x": 0.4252696238256509,
+        "height": 0.00902970283733917,
+        "width": 0.13288616339365644
+      },
+      "text": "NLBFQP"
+    },
+    {
+      "text": "App. Nr",
+      "frame": {
+        "x": 0.05524861538481323,
+        "height": 0.010174418070230118,
+        "width": 0.14917127291361493,
+        "y": 0.23982558149298572
+      }
+    },
+    {
+      "text": "A0000000041010",
+      "frame": {
+        "height": 0.010174418070230229,
+        "y": 0.23982558183213298,
+        "x": 0.42541436013744494,
+        "width": 0.30386740366617837
+      }
+    },
+    {
+      "frame": {
+        "x": 0.05498279476671257,
+        "width": 0.5474601427714031,
+        "y": 0.24913597011259092,
+        "height": 0.014809403205361837
+      },
+      "text": "Kassenterminal-ID ****1006"
+    },
+    {
+      "frame": {
+        "height": 0.0158428137822062,
+        "y": 0.2608958878101657,
+        "x": 0.05257303737518158,
+        "width": 0.23744346300760905
+      },
+      "text": "PAN-Laufnr."
+    },
+    {
+      "text": "Quelle",
+      "frame": {
+        "x": 0.05513686219089428,
+        "height": 0.010377232111819068,
+        "y": 0.27460789552636367,
+        "width": 0.132820200920105
+      }
+    },
+    {
+      "text": "Verifizierung",
+      "frame": {
+        "height": 0.011627906515198738,
+        "x": 0.055248627857749116,
+        "width": 0.2762430826822917,
+        "y": 0.2863372094967611
+      }
+    },
+    {
+      "frame": {
+        "x": 0.42541436227487256,
+        "y": 0.27470930246499137,
+        "width": 0.22099447250366216,
+        "height": 0.00872093014753661
+      },
+      "text": "kontaktlos"
+    },
+    {
+      "frame": {
+        "width": 0.3450515111287435,
+        "height": 0.01431387329937206,
+        "x": 0.42410256721585354,
+        "y": 0.28241079995167206
+      },
+      "text": "nicht ausgeführt"
+    },
+    {
+      "frame": {
+        "y": 0.1831395353205051,
+        "width": 0.08839778900146489,
+        "x": 0.7790055252046083,
+        "height": 0.010174418070230118
+      },
+      "text": "8,00"
+    },
+    {
+      "text": "8,00",
+      "frame": {
+        "width": 0.08839778900146478,
+        "x": 0.779005524283798,
+        "height": 0.00872093014753661,
+        "y": 0.19476744197565032
+      }
+    },
+    {
+      "text": "(MwSt.-Obersicht)",
+      "frame": {
+        "width": 0.36464087168375653,
+        "height": 0.011627906515198738,
+        "y": 0.30813953522350523,
+        "x": 0.3038674049039782
+      }
+    },
+    {
+      "frame": {
+        "x": 0.03314919486317779,
+        "height": 0.01744186029507333,
+        "y": 0.3168604652316318,
+        "width": 0.8784530003865559
+      },
+      "text": "Code MwSt. -Satz Artikelberras\nMwSt. -Betr."
+    },
+    {
+      "text": "19,00%",
+      "frame": {
+        "x": 0.22099447427100086,
+        "y": 0.3328488375127494,
+        "width": 0.13259668350219725,
+        "height": 0.011627906515198738
+      }
+    },
+    {
+      "frame": {
+        "x": 0.027624315419160883,
+        "width": 0.1436463991800944,
+        "height": 0.011627906515198738,
+        "y": 0.34302325597205185
+      },
+      "text": "SUMMEN"
+    },
+    {
+      "text": "6,72",
+      "frame": {
+        "x": 0.5524861908753734,
+        "y": 0.32994186049593366,
+        "width": 0.0939226468404134,
+        "height": 0.013081394960167358
+      }
+    },
+    {
+      "frame": {
+        "width": 0.09944751262664786,
+        "height": 0.013081394960167358,
+        "x": 0.5469613253165103,
+        "y": 0.3415697677270384
+      },
+      "text": "6,72"
+    },
+    {
+      "frame": {
+        "y": 0.3284883724508756,
+        "height": 0.013081394960167358,
+        "x": 0.823204422367086,
+        "width": 0.0939226468404134
+      },
+      "text": "1,28"
+    },
+    {
+      "text": "1,28",
+      "frame": {
+        "y": 0.34011627921333076,
+        "width": 0.0939226468404134,
+        "height": 0.01162790651519885,
+        "x": 0.8232044233753733
+      }
+    },
+    {
+      "frame": {
+        "width": 0.259668509165446,
+        "height": 0.010174418070230118,
+        "y": 0.36627906999104765,
+        "x": 0.033149173428326684
+      },
+      "text": "Filiale: 0820"
+    },
+    {
+      "text": "Datum: 10.12.2025",
+      "frame": {
+        "y": 0.3778751369236286,
+        "width": 0.34254144032796224,
+        "x": 0.03314917219329321,
+        "height": 0.011659746493854484
+      }
+    },
+    {
+      "frame": {
+        "x": 0.40883978350594863,
+        "width": 0.19889502525329594,
+        "y": 0.3662790699135283,
+        "height": 0.010174418070230118
+      },
+      "text": "Kasse: 014"
+    },
+    {
+      "text": "Trans. : 325879",
+      "frame": {
+        "width": 0.2817679405212402,
+        "height": 0.011627906515198738,
+        "y": 0.36191860478503624,
+        "x": 0.6353591283581643
+      }
+    },
+    {
+      "frame": {
+        "x": 0.4078223091205407,
+        "y": 0.3761678992495131,
+        "width": 0.2231000264485677,
+        "height": 0.012663458419916784
+      },
+      "text": "Zeit: 18:05"
+    },
+    {
+      "frame": {
+        "x": 0.6236238275037744,
+        "y": 0.3742553252585601,
+        "width": 0.29456704457600913,
+        "height": 0.01205122405571335
+      },
+      "text": "Ben.: 10348987"
+    },
+    {
+      "text": "Verkaufte",
+      "frame": {
+        "height": 0.00872093014753661,
+        "width": 0.1988950252532959,
+        "y": 0.4026162790153789,
+        "x": 0.28729282217998175
+      }
+    },
+    {
+      "frame": {
+        "y": 0.3993569717474732,
+        "x": 0.4804412934397542,
+        "height": 0.01087907997958626,
+        "width": 0.22696270942687985
+      },
+      "text": "Artikel: 2"
+    },
+    {
+      "frame": {
+        "x": 0.2265193469058713,
+        "y": 0.4096385541078893,
+        "height": 0.013326561855721453,
+        "width": 0.5248618761698405
+      },
+      "text": "Zurückgegebene Artikel: 0"
+    },
+    {
+      "text": "Primark Mode Ltd & Co.KG",
+      "frame": {
+        "height": 0.010174418070230118,
+        "width": 0.5027624448140463,
+        "x": 0.2430939160930792,
+        "y": 0.6191860467599968
+      }
+    },
+    {
+      "frame": {
+        "width": 0.29281768798828123,
+        "y": 0.6292442495929745,
+        "height": 0.01174412212392717,
+        "x": 0.34806629723514104
+      },
+      "text": "Kennedyplatz 2"
+    },
+    {
+      "text": "45127 Essen",
+      "frame": {
+        "y": 0.6423877326424552,
+        "x": 0.3701657535335297,
+        "width": 0.2320441881815592,
+        "height": 0.008775057954568899
+      }
+    },
+    {
+      "frame": {
+        "y": 0.6640431687926924,
+        "x": 0.4031068296707973,
+        "height": 0.01202994134574964,
+        "width": 0.16063717206319178
+      },
+      "text": "PRIMARK"
+    },
+    {
+      "frame": {
+        "height": 0.061058079948299926,
+        "width": 0.8574099858601888,
+        "y": 0.6736462597879401,
+        "x": 0.05451027110326443
+      },
+      "text": "Wie waren Deine heutigen Eindrücke in unserem Store? Nimm an unserer Online-Umfrage teil und Du erhaltst die Chance auf eine Geschenkkarte in Höhe von 100 € (monatliche Verlosung)."
+    },
+    {
+      "text": "Wir freuen uns auf Dein Feedback unter",
+      "frame": {
+        "y": 0.7325581397715617,
+        "x": 0.09392265100435987,
+        "width": 0.7955801010131835,
+        "height": 0.013334521850385417
+      }
+    },
+    {
+      "frame": {
+        "width": 0.39779005050659183,
+        "y": 0.7456395350781564,
+        "x": 0.27624310126604107,
+        "height": 0.011627906515198738
+      },
+      "text": "www.tellprimark.de."
+    },
+    {
+      "text": "*Teilnahme ab 18. Teilnahmebedingungen und Datenschutzbestimmungen findest Du auf www.tellprimark.de.",
+      "frame": {
+        "height": 0.03778632708212115,
+        "width": 0.8032208760579427,
+        "y": 0.7542227402242252,
+        "x": 0.08728544654585585
+      }
+    },
+    {
+      "text": "Rückgabe",
+      "frame": {
+        "x": 0.40323202298931854,
+        "y": 0.8036616092655638,
+        "width": 0.17696137428283693,
+        "height": 0.008955851050352903
+      }
+    },
+    {
+      "text": "Die Erstattung/der Umtausch der gekauften Artikel ist bis zum 30.01.2026 möglich.",
+      "frame": {
+        "x": 0.0489843775233157,
+        "width": 0.8644582430521647,
+        "y": 0.8109565876824598,
+        "height": 0.02886929673929206
+      }
+    },
+    {
+      "text": "Eine Erstattung oder ein Umtausch ist nur in dem Land möglich, in dem Sie die",
+      "frame": {
+        "height": 0.03023369341011506,
+        "x": 0.04883390650170411,
+        "y": 0.8332687846188893,
+        "width": 0.8592192014058431
+      }
+    },
+    {
+      "frame": {
+        "x": 0.04972377957801862,
+        "y": 0.8619186047972494,
+        "width": 0.4751380920410156,
+        "height": 0.010174418070230118
+      },
+      "text": "Artikel gekauft haben."
+    },
+    {
+      "text": "Die Details finden",
+      "frame": {
+        "x": 0.5248618816188018,
+        "height": 0.010174418070230118,
+        "width": 0.38674033482869463,
+        "y": 0.8575581397475883
+      }
+    },
+    {
+      "frame": {
+        "y": 0.8706395351991799,
+        "x": 0.25414364360448816,
+        "height": 0.013259698109454487,
+        "width": 0.44751380284627285
+      },
+      "text": "Sie auf der Rückseite"
+    },
+    {
+      "frame": {
+        "x": 0.3573269484201668,
+        "width": 0.24079618453979496,
+        "height": 0.013984806044078257,
+        "y": 0.9049209821604534
+      },
+      "text": "VIELEN DANK"
+    },
+    {
+      "frame": {
+        "width": 0.633587137858073,
+        "height": 0.022843286737815993,
+        "y": 0.9639606909931816,
+        "x": 0.18045865370826122
+      },
+      "text": "08200143258790001121025003"
+    }
+  ],
+  "options": {
+    "lineWidth": 56,
+    "minConfidence": null
+  },
+  "expected": null
+}

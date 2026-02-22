@@ -1,0 +1,33 @@
+{
+  "_comment": "TEMPLATE — copy this file, rename it, fill in real data, remove this key.",
+  "description": "e.g. 'Supermarket receipt · iOS 15 · V2 · ocrOptimized filter'",
+  "metadata": {
+    "platform": "ios",
+    "textVersion": 2,
+    "filter": "color",
+    "ocrEngine": "VNRecognizeTextRequest"
+  },
+  "text": "Raw text string returned by the OCR engine (result.text). Used for reference only — not consumed by reconstructReceipt.",
+  "blocks": [
+    {
+      "text": "STORE NAME",
+      "frame": { "x": 0.25, "y": 0.02, "width": 0.5, "height": 0.03 },
+      "confidence": 0.99
+    },
+    {
+      "text": "Milk 2L",
+      "frame": { "x": 0.0, "y": 0.08, "width": 0.4, "height": 0.025 },
+      "confidence": 0.97
+    },
+    {
+      "text": "2.49",
+      "frame": { "x": 0.75, "y": 0.08, "width": 0.2, "height": 0.025 },
+      "confidence": 0.98
+    }
+  ],
+  "options": {
+    "lineWidth": 56,
+    "minConfidence": null
+  },
+  "expected": null
+}

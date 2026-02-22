@@ -40,7 +40,7 @@ object OCRConfiguration {
      * Adaptive Spacing Factor.
      * Gap width relative to median height to trigger extra spaces.
      */
-    const val ADAPTIVE_SPACING_FACTOR: Double = 0.5
+    const val ADAPTIVE_SPACING_FACTOR: Double = 1.0
     
     /**
      * Space Width Factor.

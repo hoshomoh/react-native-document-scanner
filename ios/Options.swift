@@ -12,7 +12,7 @@ public class BaseOptions {
     public let includeBase64: Bool
     public let includeText: Bool
     public let textVersion: Int
-    
+
     init(quality: CGFloat, format: String, filter: String, includeBase64: Bool, includeText: Bool, textVersion: Int) {
         self.quality = quality
         self.format = format
@@ -20,6 +20,19 @@ public class BaseOptions {
         self.includeBase64 = includeBase64
         self.includeText = includeText
         self.textVersion = textVersion
+    }
+
+    /**
+     Reads an integer option from the bridge dictionary.
+     Covers NSNumber, Int, and Double — all three bridging representations that can appear
+     depending on whether the call comes through the old bridge or JSI (new arch).
+     */
+    static func intOption(from dictionary: [String: Any]?, key: String, fallback: Int) -> Int {
+        guard let raw = dictionary?[key] else { return fallback }
+        if let n = raw as? NSNumber { return n.intValue }
+        if let i = raw as? Int { return i }
+        if let d = raw as? Double { return Int(d) }
+        return fallback
     }
 
     /**
@@ -32,26 +45,21 @@ public class BaseOptions {
         /* Quality: Clamp [0.1, 1.0] */
         let q = dictionary?["quality"] as? CGFloat ?? 1.0
         self.quality = max(0.1, min(1.0, q))
-        
+
         /* Format: whitelist [jpg, png] */
         let f = dictionary?["format"] as? String ?? "jpg"
         self.format = (f == "png") ? "png" : "jpg"
-        
+
         /* Filter: whitelist supported types */
         let filterInput = dictionary?["filter"] as? String ?? "color"
         let validFilters = ["color", "grayscale", "monochrome", "denoise", "sharpen", "ocrOptimized"]
         self.filter = validFilters.contains(filterInput) ? filterInput : "color"
-        
+
         self.includeBase64 = dictionary?["includeBase64"] as? Bool ?? false
         self.includeText = dictionary?["includeText"] as? Bool ?? defaultIncludeText
-        
-        /* Text Version: allow [1, 2] */
-        var rawVersion = 2
-        if let versionNum = dictionary?["textVersion"] as? NSNumber {
-            rawVersion = versionNum.intValue
-        } else if let versionInt = dictionary?["textVersion"] as? Int {
-            rawVersion = versionInt
-        }
+
+        /* Text Version: allow [1, 2]. */
+        let rawVersion = BaseOptions.intOption(from: dictionary, key: "textVersion", fallback: 2)
         self.textVersion = (rawVersion == 1) ? 1 : 2
     }
 }
@@ -62,7 +70,7 @@ public class BaseOptions {
  */
 public class ScanOptions: BaseOptions {
     public let maxPageCount: Int
-    
+
     /**
      Initializes ScanOptions from a raw dictionary.
      - Parameters:
@@ -70,16 +78,10 @@ public class ScanOptions: BaseOptions {
        - fallbackPageCount: Default page count if not specified.
      */
     public init(from dictionary: [String: Any]?, fallbackPageCount: Int) {
-        var rawMax = fallbackPageCount
-        if let maxNum = dictionary?["maxPageCount"] as? NSNumber {
-            rawMax = maxNum.intValue
-        } else if let maxInt = dictionary?["maxPageCount"] as? Int {
-            rawMax = maxInt
-        }
-        
         /* Max Page Count: Clamp [0, 100]. 0 = unlimited. */
+        let rawMax = BaseOptions.intOption(from: dictionary, key: "maxPageCount", fallback: fallbackPageCount)
         self.maxPageCount = max(0, min(100, rawMax))
-        
+
         super.init(from: dictionary, defaultIncludeText: false)
     }
 }
@@ -90,7 +92,7 @@ public class ScanOptions: BaseOptions {
  */
 public class ProcessOptions: BaseOptions {
     public let images: [String]
-    
+
     /**
      Initializes ProcessOptions from a raw dictionary.
      - Parameter dictionary: The options dictionary from React Native.

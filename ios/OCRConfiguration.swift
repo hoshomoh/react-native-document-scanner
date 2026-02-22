@@ -44,7 +44,7 @@ public enum OCRConfiguration {
      Adaptive Spacing Factor.
      Gap width relative to median height to trigger extra spaces.
      */
-    public static let adaptiveSpacingFactor: Double = 0.5
+    public static let adaptiveSpacingFactor: Double = 1.0
     
     /**
      Space Width Factor.

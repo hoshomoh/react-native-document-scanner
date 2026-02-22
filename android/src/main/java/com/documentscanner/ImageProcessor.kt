@@ -94,7 +94,15 @@ class ImageProcessor(private val context: Context) {
             Logger.error("Failed to process image: $uriStr", e)
              // Swallow specific image error to allow other images in a batch to proceed.
         }
-        
+
+        // 5. Metadata
+        val metadataMap = Arguments.createMap()
+        metadataMap.putString("platform", "android")
+        metadataMap.putInt("textVersion", options.textVersion)
+        metadataMap.putString("filter", options.filter)
+        metadataMap.putString("ocrEngine", if (options.includeText) "MLKit" else "none")
+        result.putMap("metadata", metadataMap)
+
         return@withContext result
     }
 

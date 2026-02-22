@@ -4,6 +4,7 @@ import js from '@eslint/js';
 import prettier from 'eslint-plugin-prettier';
 import { defineConfig } from 'eslint/config';
 import path from 'node:path';
+import tsParser from '@typescript-eslint/parser';
 import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
@@ -19,11 +20,23 @@ export default defineConfig([
     extends: fixupConfigRules(compat.extends('@react-native', 'prettier')),
     plugins: { prettier },
     rules: {
+      'curly': ['error', 'all'],
       'react/react-in-jsx-scope': 'off',
       'prettier/prettier': 'error',
     },
   },
   {
-    ignores: ['node_modules/', 'lib/'],
+    files: ['**/*.ts', '**/*.tsx'],
+    languageOptions: {
+      parser: tsParser,
+    },
+  },
+  {
+    ignores: [
+      'node_modules/',
+      'lib/',
+      'example/ios/Pods',
+      'example/vendor/',
+    ],
   },
 ]);

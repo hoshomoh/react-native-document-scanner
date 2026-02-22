@@ -56,7 +56,7 @@ public class DocumentScannerManager: NSObject, VNDocumentCameraViewControllerDel
     self.resolve = resolve
     self.reject = reject
 
-    DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+    Task(priority: .userInitiated) { [weak self] in
       guard let self = self else { return }
 
       guard let opts = ProcessOptions(from: options as? [String: Any]) else {
@@ -72,8 +72,8 @@ public class DocumentScannerManager: NSObject, VNDocumentCameraViewControllerDel
         return
       }
 
-      /* Process all images */
-      let results = ImageProcessor.processAll(images, options: opts)
+      /* Process all images — async, never blocks the UI thread */
+      let results = await ImageProcessor.processAll(images, options: opts)
 
       self.resolve?(results.map { $0.dictionary })
       self.cleanup()
@@ -107,7 +107,7 @@ public class DocumentScannerManager: NSObject, VNDocumentCameraViewControllerDel
   /* ----------------------------------------------------------------------- */
 
   private func processScan(_ scan: VNDocumentCameraScan) {
-    DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+    Task(priority: .userInitiated) { [weak self] in
       guard let self = self else { return }
 
       let opts = ScanOptions(from: self.scanOptions, fallbackPageCount: scan.pageCount)
@@ -119,8 +119,8 @@ public class DocumentScannerManager: NSObject, VNDocumentCameraViewControllerDel
         images.append(scan.imageOfPage(at: i))
       }
 
-      /* Process all images */
-      let results = ImageProcessor.processAll(images, options: opts)
+      /* Process all images — async, never blocks the UI thread */
+      let results = await ImageProcessor.processAll(images, options: opts)
 
       self.resolve?(results.map { $0.dictionary })
       self.cleanup()
