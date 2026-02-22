@@ -5,8 +5,6 @@ on:
     branches: [main]
   push:
     branches: [main]
-  release:
-    types: [published]
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -14,7 +12,6 @@ concurrency:
 
 jobs:
   lint:
-    if: github.event_name != 'release'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -27,7 +24,6 @@ jobs:
         run: yarn typecheck
 
   test:
-    if: github.event_name != 'release'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -38,7 +34,6 @@ jobs:
         run: yarn test --maxWorkers=2 --coverage
 
   build-library:
-    if: github.event_name != 'release'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -55,15 +50,19 @@ jobs:
       contents: write
       pull-requests: write
       issues: write
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
     steps:
       - name: Run release-please
+        id: release
         uses: googleapis/release-please-action@v4
         with:
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
 
   publish:
-    if: github.event_name == 'release'
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
     runs-on: ubuntu-latest
     permissions:
       contents: read
