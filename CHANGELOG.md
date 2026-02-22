@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/hoshomoh/react-native-document-scanner/compare/react-native-document-scanner@v1.2.0...react-native-document-scanner@v1.2.1) (2026-02-22)
+
+
+### Bug Fixes
+
+* fixed issue with NPM TOKEN causing push failure ([4aa1aca](https://github.com/hoshomoh/react-native-document-scanner/commit/4aa1aca2ef7142518f7d58d3bfc77259b75ef31d))
+
 ## [1.2.0](https://github.com/hoshomoh/react-native-document-scanner/compare/react-native-document-scanner@v1.1.0...react-native-document-scanner@v1.2.0) (2026-02-22)
 
 
