@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/hoshomoh/react-native-document-scanner/compare/react-native-document-scanner@v1.2.1...react-native-document-scanner@v2.0.0) (2026-03-12)
+
+
+### ⚠ BREAKING CHANGES
+
+* `filter`, `format`, `platform`, and `ocrEngine` fields now use TypeScript enums (`FilterType`, `FormatType`, `Platform`, `OcrEngine`) instead of string literal unions. Update call sites to use enum values, e.g.
+
+### Features
+
+* replace string literal unions with enums for RN 0.84 codegen compatibility ([6ebd966](https://github.com/hoshomoh/react-native-document-scanner/commit/6ebd966e3848ef78c600dc9bfb80421f477a4fe5))
+
 ## [1.2.1](https://github.com/hoshomoh/react-native-document-scanner/compare/react-native-document-scanner@v1.2.0...react-native-document-scanner@v1.2.1) (2026-02-22)
 
 ### Bug Fixes
