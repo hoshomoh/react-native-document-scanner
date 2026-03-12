@@ -111,8 +111,8 @@ export default function App() {
   /* Options State */
   const [maxPageCount, setMaxPageCount] = React.useState('5');
   const [quality, setQuality] = React.useState('0.8');
-  const [format, setFormat] = React.useState<FormatType>('jpg');
-  const [filter, setFilter] = React.useState<FilterType>('color');
+  const [format, setFormat] = React.useState<FormatType>(Format.JPG);
+  const [filter, setFilter] = React.useState<FilterType>(Filter.COLOR);
   const [includeBase64, setIncludeBase64] = React.useState(false);
   const [includeText, setIncludeText] = React.useState(true);
   const [textVersion, setTextVersion] = React.useState('2');

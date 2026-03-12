@@ -4,8 +4,10 @@ import DocumentScanner, {
   type ScanMetadata,
   type TextBlock,
   type ProcessOptions,
-  type FilterType,
-  type FormatType,
+  FilterType,
+  FormatType,
+  Platform,
+  OcrEngine,
 } from './NativeDocumentScanner';
 
 /**
@@ -14,17 +16,17 @@ import DocumentScanner, {
  */
 export const Filter = {
   /** No filter (original colors) */
-  COLOR: 'color',
+  COLOR: FilterType.COLOR,
   /** Desaturated image */
-  GRAYSCALE: 'grayscale',
+  GRAYSCALE: FilterType.GRAYSCALE,
   /** High-contrast black & white */
-  MONOCHROME: 'monochrome',
+  MONOCHROME: FilterType.MONOCHROME,
   /** Noise reduction (for noisy photos) */
-  DENOISE: 'denoise',
+  DENOISE: FilterType.DENOISE,
   /** Edge enhancement (for blurry text) */
-  SHARPEN: 'sharpen',
+  SHARPEN: FilterType.SHARPEN,
   /** Full OCR pipeline: denoise → sharpen → monochrome */
-  OCR_OPTIMIZED: 'ocrOptimized',
+  OCR_OPTIMIZED: FilterType.OCR_OPTIMIZED,
 } as const;
 
 /**
@@ -32,9 +34,9 @@ export const Filter = {
  */
 export const Format = {
   /** JPEG format (smaller file size) */
-  JPG: 'jpg',
+  JPG: FormatType.JPG,
   /** PNG format (lossless) */
-  PNG: 'png',
+  PNG: FormatType.PNG,
 } as const;
 
 export function scanDocuments(options?: ScanOptions): Promise<ScanResult[]> {
@@ -56,6 +58,5 @@ export type {
   ScanMetadata,
   TextBlock,
   ProcessOptions,
-  FilterType,
-  FormatType,
 };
+export { FilterType, FormatType, Platform, OcrEngine };

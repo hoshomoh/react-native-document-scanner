@@ -1,22 +1,46 @@
 import { TurboModuleRegistry, type TurboModule } from 'react-native';
 
-/**
- * Type union of all available filter values.
- * Required for React Native Codegen compatibility.
- */
-export type FilterType =
-  | 'color'
-  | 'grayscale'
-  | 'monochrome'
-  | 'denoise'
-  | 'sharpen'
-  | 'ocrOptimized';
+/** Available image filters for post-processing. */
+export enum FilterType {
+  /** No filter (original colors). Default. */
+  COLOR = 'color',
+  /** Desaturates the image. */
+  GRAYSCALE = 'grayscale',
+  /** High-contrast black & white (best for OCR). */
+  MONOCHROME = 'monochrome',
+  /** Reduces image noise (improves OCR on noisy photos). */
+  DENOISE = 'denoise',
+  /** Enhances edge clarity (improves OCR on blurry text). */
+  SHARPEN = 'sharpen',
+  /** Full pipeline: denoise → sharpen → monochrome (best OCR accuracy). */
+  OCR_OPTIMIZED = 'ocrOptimized',
+}
 
-/**
- * Type union of all available format values.
- * Required for React Native Codegen compatibility.
- */
-export type FormatType = 'jpg' | 'png';
+/** Available output image formats. */
+export enum FormatType {
+  /** JPEG format (smaller file size). Default. */
+  JPG = 'jpg',
+  /** PNG format (lossless). */
+  PNG = 'png',
+}
+
+/** Platform that generated a ScanResult. */
+export enum Platform {
+  IOS = 'ios',
+  ANDROID = 'android',
+}
+
+/** OCR engine used to produce a ScanResult. */
+export enum OcrEngine {
+  /** iOS 26+ native document understanding (V2). */
+  RECOGNIZE_DOCUMENTS_REQUEST = 'RecognizeDocumentsRequest',
+  /** Apple Vision text request (V1 or V2 on iOS < 26). */
+  VN_RECOGNIZE_TEXT_REQUEST = 'VNRecognizeTextRequest',
+  /** Android ML Kit Text Recognition (V1 or V2). */
+  ML_KIT = 'MLKit',
+  /** OCR was not performed (`includeText` was false). */
+  NONE = 'none',
+}
 
 /**
  * Represents a discrete block of text recognized by the OCR engine.
@@ -46,23 +70,13 @@ export interface TextBlock {
  */
 export interface ScanMetadata {
   /** Platform that generated this result. */
-  platform: 'ios' | 'android';
+  platform: Platform;
   /** OCR engine version that was requested (1 = Raw, 2 = Heuristic). */
-  textVersion: 1 | 2;
+  textVersion: number;
   /** Image filter applied before OCR. */
   filter: FilterType;
-  /**
-   * The specific OCR engine used:
-   * - `"RecognizeDocumentsRequest"`: iOS 26+ native document understanding (V2).
-   * - `"VNRecognizeTextRequest"`: Apple Vision text request (V1 or V2 on iOS < 26).
-   * - `"MLKit"`: Android ML Kit Text Recognition (V1 or V2).
-   * - `"none"`: OCR was not performed (`includeText` was false).
-   */
-  ocrEngine:
-    | 'RecognizeDocumentsRequest'
-    | 'VNRecognizeTextRequest'
-    | 'MLKit'
-    | 'none';
+  /** The specific OCR engine used. */
+  ocrEngine: OcrEngine;
 }
 
 /**
@@ -121,17 +135,9 @@ export interface ScanOptions {
   maxPageCount?: number;
   /** Compression quality (0.0 to 1.0) for JPEG. Default is 1.0. */
   quality?: number;
-  /** Output image format. Use the `Format` constant for type-safe values. Default is 'jpg'. */
+  /** Output image format. Default is FormatType.JPG. */
   format?: FormatType;
-  /**
-   * Post-processing filter to apply.
-   * - `color`: No filter (default).
-   * - `grayscale`: Desaturates the image.
-   * - `monochrome`: High-contrast black & white (best for OCR).
-   * - `denoise`: Reduces image noise (improves OCR on noisy photos).
-   * - `sharpen`: Enhances edge clarity (improves OCR on blurry text).
-   * - `ocrOptimized`: Full pipeline: denoise → sharpen → monochrome (best accuracy).
-   */
+  /** Post-processing filter. Default is FilterType.COLOR. */
   filter?: FilterType;
   /** Whether to include the base64 string in the result. Default is false. */
   includeBase64?: boolean;
@@ -159,17 +165,9 @@ export interface ProcessOptions {
   images: string[];
   /** Compression quality (0.0 to 1.0) for JPEG. Default is 1.0. */
   quality?: number;
-  /** Output image format. Use the `Format` constant for type-safe values. Default is 'jpg'. */
+  /** Output image format. Default is FormatType.JPG. */
   format?: FormatType;
-  /**
-   * Post-processing filter to apply.
-   * - `color`: No filter (default).
-   * - `grayscale`: Desaturates the image.
-   * - `monochrome`: High-contrast black & white (best for OCR).
-   * - `denoise`: Reduces image noise (improves OCR on noisy photos).
-   * - `sharpen`: Enhances edge clarity (improves OCR on blurry text).
-   * - `ocrOptimized`: Full pipeline: denoise → sharpen → monochrome (best accuracy).
-   */
+  /** Post-processing filter. Default is FilterType.COLOR. */
   filter?: FilterType;
   /** Whether to include the base64 string in the result. Default is false. */
   includeBase64?: boolean;

@@ -40,6 +40,15 @@ npm install @hoshomoh/react-native-document-scanner
 cd ios && pod install
 ```
 
+#### Required Permissions
+
+Add the following key to your `ios/<YourApp>/Info.plist`. Without it, the app will crash when attempting to open the document scanner:
+
+```xml
+<key>NSCameraUsageDescription</key>
+<string>This app uses the camera to scan documents.</string>
+```
+
 ### Android Setup
 
 No additional setup required. Google Play Services will automatically manage ML Kit models.
